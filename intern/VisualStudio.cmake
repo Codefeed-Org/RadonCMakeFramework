@@ -16,10 +16,9 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		
 		# _HAS_EXCEPTIONS will be used by STL to figure out if exceptions should be used.
 		if (${${projectid}_COMPILER_USE_EXCEPTION})
-			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /EHsc")
-			add_definitions(-D_HAS_EXCEPTIONS=1)
+			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /EHsc /D_HAS_EXCEPTIONS=1")
 		else()
-			add_definitions(-D_HAS_EXCEPTIONS=0)
+			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /D_HAS_EXCEPTIONS=0")
 		endif()
 		
 		if(${${projectid}_COMPILER_USE_INTRINSIC})
