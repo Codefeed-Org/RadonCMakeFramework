@@ -3,6 +3,7 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
+	
 macro(ConfigureCompilerAndLinker projectid buildtype)
 	#
 	# Options for general compiler features.
@@ -90,12 +91,12 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	# Each include must handle it self.
 	#
 	include("${${projectid}_LOCATION}/cmake/intern/VisualStudio.cmake")
-	ConfigureCompilerAndLinkerVS(${projectid} ${buildtype})
 	include("${${projectid}_LOCATION}/cmake/intern/GCC.cmake")
-	ConfigureCompilerAndLinkerGCC(${projectid} ${buildtype})
 	include("${${projectid}_LOCATION}/cmake/intern/XCode.cmake")
-	ConfigureCompilerAndLinkerXCode(${projectid} ${buildtype})
 	include("${${projectid}_LOCATION}/cmake/intern/UnixMakefile.cmake")
+	ConfigureCompilerAndLinkerVS(${projectid} ${buildtype})
+	ConfigureCompilerAndLinkerGCC(${projectid} ${buildtype})
+	ConfigureCompilerAndLinkerXCode(${projectid} ${buildtype})
 	ConfigureCompilerAndLinkerUnixMakefile(${projectid} ${buildtype})
 
 	#
@@ -127,6 +128,17 @@ macro(FinalizeCompilerAndLinkerSettings projectid)
 	set(CMAKE_ASM_FLAGS_RELWITHDEBINFO ${${projectid}_ASM_COMPILER_FLAGS_RELWITHDEBINFO})
 	set(CMAKE_ASM_FLAGS_MINSIZEREL ${${projectid}_ASM_COMPILER_FLAGS_RELMINSIZE})
 
+	# following macros will attach the defines to the compiler targets in the format
+	# they need them
+	include("${${projectid}_LOCATION}/cmake/intern/VisualStudio.cmake")
+	include("${${projectid}_LOCATION}/cmake/intern/GCC.cmake")
+	include("${${projectid}_LOCATION}/cmake/intern/XCode.cmake")
+	include("${${projectid}_LOCATION}/cmake/intern/UnixMakefile.cmake")
+	ProcessDefinesVS(${projectid})
+	ProcessDefinesGCC(${projectid})
+	ProcessDefinesXCode(${projectid})
+	ProcessDefinesUnixMakefile(${projectid})
+	
 	set(CMAKE_C_FLAGS ${${projectid}_COMPILER_FLAGS})
 	set(CMAKE_C_FLAGS_DEBUG ${${projectid}_COMPILER_FLAGS_DEBUG})
 	set(CMAKE_C_FLAGS_RELEASE ${${projectid}_COMPILER_FLAGS_RELEASE})

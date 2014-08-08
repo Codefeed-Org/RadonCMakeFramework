@@ -42,6 +42,22 @@ macro(Generate what projectid projectname foldergroup)
 	set(${projectid}_NAME ${projectname} CACHE INTERNAL "Projectname of ${projectid}")
 	set(${projectid}_DEPS "" CACHE INTERNAL "Project specific dependencies of ${projectname}")
 	set(${projectid}_PUBLIC_INCLUDES "" CACHE INTERNAL "Project public include directories")
+		
+	#
+	# Initialized compiler defines.
+	# This defines are public and will be delegated to projects which depend on this target.
+	#
+	# This defines will be merged into all compiler builds.
+	set(${projectid}_COMPILER_DEFINES "" CACHE INTERNAL "Project public defines")
+	# This defines will be used for Debug target.
+	set(${projectid}_COMPILER_DEFINES_DEBUG "" CACHE INTERNAL "Project public defines")
+	# This defines will be used for Release target.
+	set(${projectid}_COMPILER_DEFINES_RELEASE "" CACHE INTERNAL "Project public defines")
+	# This defines will be used for "minimized Release" target.
+	set(${projectid}_COMPILER_DEFINES_RELMINSIZE "" CACHE INTERNAL "Project public defines")
+	# This defines will be used for "Release with debug infos" target.
+	set(${projectid}_COMPILER_DEFINES_RELWITHDEBINFO "" CACHE INTERNAL "Project public defines")
+	
 	# binary output get D as postfix
 	set(CMAKE_DEBUG_POSTFIX D)	
 	
@@ -62,8 +78,6 @@ macro(AddDependency projectid dependencyProjectName)
 endmacro()
 
 macro(Finalize projectid)
-	include("${${projectid}_LOCATION}/cmake/intern/CompilerAndLinkerSettings.cmake")
-	FinalizeCompilerAndLinkerSettings(${projectid})
 	# Remove all spaces, tabs, return and carriage return at the beginning of the string.
 	string(REGEX REPLACE "^[ \t\r\n]+" "" deps "${${CMAKE_PROJECT_NAME}_INTEGRATED}")
 	# Remove all spaces, tabs, return and carriage return at the end of the string.
@@ -71,12 +85,24 @@ macro(Finalize projectid)
 	list(APPEND deps "${${projectid}_DEPS}")
 	message(STATUS "Finalized project: ${${projectid}_NAME} Depends on: ${deps}")	
 	add_dependencies(${${projectid}_NAME} "${deps}")
+	
 	foreach(dep ${deps})
 		if(DEFINED ${${dep}_ID}_ISLIBRARY OR DEFINED ${${dep}_ID}_ISMODULE)
+			# assign public libraries from the dependency
 			target_link_libraries(${${projectid}_NAME} ${dep})
+			# assign public includes from the dependency
 			include_directories(${${${dep}_ID}_PUBLIC_INCLUDES})
+			# assign public defines from the dependency
+			list(APPEND ${projectid}_COMPILER_DEFINES "${${${dep}_ID}_COMPILER_DEFINES}")
+			list(APPEND ${projectid}_COMPILER_DEFINES_RELEASE "${${${dep}_ID}_COMPILER_DEFINES_RELEASE}")
+			list(APPEND ${projectid}_COMPILER_DEFINES_DEBUG "${${${dep}_ID}_COMPILER_DEFINES_DEBUG}")
+			list(APPEND ${projectid}_COMPILER_DEFINES_RELWITHDEBINFO "${${${dep}_ID}_COMPILER_DEFINES_RELWITHDEBINFO}")
+			list(APPEND ${projectid}_COMPILER_DEFINES_MINSIZEREL "${${${dep}_ID}_COMPILER_DEFINES_MINSIZEREL}")
 		endif()
 	endforeach()
+	
+	include("${${projectid}_LOCATION}/cmake/intern/CompilerAndLinkerSettings.cmake")
+	FinalizeCompilerAndLinkerSettings(${projectid})	
 	set(${projectid}_FINALIZED ON)
 endmacro()
 
@@ -86,6 +112,22 @@ macro(GenerateCustomTargetMetaInfo what projectname projectid)
 	set(${projectid}_NAME ${projectname} CACHE INTERNAL "Projectname of ${projectid}")
 	set(${projectid}_DEPS "" CACHE INTERNAL "Project specific dependencies of ${projectname}")
 	set(${projectid}_PUBLIC_INCLUDES "" CACHE INTERNAL "Project public include directories")
+	
+	#
+	# Initialized compiler defines.
+	# This defines are public and will be delegated to projects which depend on this target.
+	#
+	# This defines will be merged into all compiler builds.
+	set(${projectid}_COMPILER_DEFINES "" CACHE INTERNAL "Project public defines")
+	# This defines will be used for Debug target.
+	set(${projectid}_COMPILER_DEFINES_DEBUG "" CACHE INTERNAL "Project public defines")
+	# This defines will be used for Release target.
+	set(${projectid}_COMPILER_DEFINES_RELEASE "" CACHE INTERNAL "Project public defines")
+	# This defines will be used for "minimized Release" target.
+	set(${projectid}_COMPILER_DEFINES_RELMINSIZE "" CACHE INTERNAL "Project public defines")
+	# This defines will be used for "Release with debug infos" target.
+	set(${projectid}_COMPILER_DEFINES_RELWITHDEBINFO "" CACHE INTERNAL "Project public defines")
+	
 	
 	if(${what} STREQUAL "MODULE")
 		set(${projectid}_ISMODULE ON CACHE INTERNAL "Project is a module.")

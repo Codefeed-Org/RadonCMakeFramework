@@ -127,3 +127,15 @@ macro(AddPublicInclude projectid addpath)
 	set(${projectid}_PUBLIC_INCLUDES "${${projectid}_PUBLIC_INCLUDES} ${addpath}" CACHE INTERNAL "include directories")
 	include_directories(${addpath})
 endmacro()
+
+macro(AddPublicDefine projectid)
+	set(${projectid}_COMPILER_DEFINES "${${projectid}_COMPILER_DEFINES} ${ARGN}" CACHE INTERNAL "Project public defines")
+endmacro()
+
+macro(AddPublicTargetDefine projectid target)
+	set(${projectid}_COMPILER_DEFINES_${target} "${${projectid}_COMPILER_DEFINES_${target}} ${ARGN}" CACHE INTERNAL "Project public defines")
+endmacro()
+
+macro(AddPrivateDefine define)
+	add_definitions("-D${define}")
+endmacro()
