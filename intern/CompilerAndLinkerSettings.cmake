@@ -91,10 +91,10 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	# Include all compiler files.
 	# Each include must handle it self.
 	#
-	include("${${projectid}_LOCATION}/cmake/intern/VisualStudio.cmake")
-	include("${${projectid}_LOCATION}/cmake/intern/GCC.cmake")
-	include("${${projectid}_LOCATION}/cmake/intern/XCode.cmake")
-	include("${${projectid}_LOCATION}/cmake/intern/UnixMakefile.cmake")
+	include("${${projectid}_LOCATION}/intern/VisualStudio.cmake")
+	include("${${projectid}_LOCATION}/intern/GCC.cmake")
+	include("${${projectid}_LOCATION}/intern/XCode.cmake")
+	include("${${projectid}_LOCATION}/intern/UnixMakefile.cmake")
 	ConfigureCompilerAndLinkerVS(${projectid} ${buildtype})
 	ConfigureCompilerAndLinkerGCC(${projectid} ${buildtype})
 	ConfigureCompilerAndLinkerXCode(${projectid} ${buildtype})
@@ -131,10 +131,10 @@ macro(FinalizeCompilerAndLinkerSettings projectid)
 
 	# following macros will attach the defines to the compiler targets in the format
 	# they need them
-	include("${${projectid}_LOCATION}/cmake/intern/VisualStudio.cmake")
-	include("${${projectid}_LOCATION}/cmake/intern/GCC.cmake")
-	include("${${projectid}_LOCATION}/cmake/intern/XCode.cmake")
-	include("${${projectid}_LOCATION}/cmake/intern/UnixMakefile.cmake")
+	include("${${projectid}_LOCATION}/intern/VisualStudio.cmake")
+	include("${${projectid}_LOCATION}/intern/GCC.cmake")
+	include("${${projectid}_LOCATION}/intern/XCode.cmake")
+	include("${${projectid}_LOCATION}/intern/UnixMakefile.cmake")
 	ProcessDefinesVS(${projectid})
 	ProcessDefinesGCC(${projectid})
 	ProcessDefinesXCode(${projectid})
