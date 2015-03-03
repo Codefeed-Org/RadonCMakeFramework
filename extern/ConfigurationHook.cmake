@@ -3,7 +3,7 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
-# It will be included by cmake/extern/Integrate.cmake 
+# It will be included by extern/Integrate.cmake 
 # and move most of the configuration into Radon CMake framework scope.
 #
 macro(ConfigureProject projectid path)
@@ -64,7 +64,7 @@ macro(Integrate projectid projectname environmentname)
 		if(${projectid}_USE)
 			# does an environment variable exist
 			if(WIN32)
-				if(EXISTS "$ENV{${environmentname}}/cmake/")
+				if(EXISTS "$ENV{${environmentname}}/")
 					FoundProject(${projectid} ${projectname} $ENV{${environmentname}})
 				else()		
 					message(AUTHOR_WARNING "Add user or system environment variable ${environmentname} !")
