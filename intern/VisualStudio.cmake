@@ -36,9 +36,15 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 				set(${projectid}_LINKER_FLAGS "${${projectid}_LINKER_FLAGS} /NODEFAULTLIB")
 			endif()		
 			
+			message(STATUS "--> ${projectid}_LINKER_USE_WINDOW = ${${projectid}_LINKER_USE_WINDOW}")
+			if(${${projectid}_LINKER_USE_WINDOW})
+				set(${projectid}_LINKER_FLAGS "${${projectid}_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+			message(STATUS "--> ${${projectid}_LINKER_FLAGS}")
+				endif()
+			
 			if(NOT ${${projectid}_LINKER_USE_DEFAULTENTRYPOINT})
 				set(${projectid}_LINKER_FLAGS "${${projectid}_LINKER_FLAGS} /ENTRY:\"${${projectid}_LINKER_ENTRYPOINT}\"")
-			endif()	
+			endif()			
 		endif()
 		
 		if (${${projectid}_LINKER_STATIC_LINKED_CRT})

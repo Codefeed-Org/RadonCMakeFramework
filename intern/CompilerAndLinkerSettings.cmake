@@ -33,6 +33,7 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 		if(NOT ${${projectid}_LINKER_USE_DEFAULTENTRYPOINT})
 			set(${projectid}_LINKER_ENTRYPOINT "entrypoint" CACHE STRING "Custom entry point(Default: entry")
 		endif()
+		option(${projectid}_LINKER_USE_WINDOW "The executable will contain at least one window(Default: off)." OFF)
 	endif()
 	
 	# This allow to add and compile asm files commonly named with .s as extension

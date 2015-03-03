@@ -7,11 +7,11 @@
 # Obtain Radon CMake framework root path to call the other scripts from there.
 # At this point the projectid is not set yet but the name of the cmake project
 # is available and all macros called in it's scope. 
-set(${CMAKE_PROJECT_NAME}_PATH "${CMAKE_CURRENT_LIST_DIR}/../..")
+set(${CMAKE_PROJECT_NAME}_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 # The following includes are the only exception where an other variable than
 # ${${projectid}_LOCATION} is used to access files of the framework.
-include("${${CMAKE_PROJECT_NAME}_PATH}/cmake/util/Macros.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/cmake/extern/Integrate.cmake")
+include("${${CMAKE_PROJECT_NAME}_PATH}/util/Macros.cmake")
+include("${${CMAKE_PROJECT_NAME}_PATH}/extern/Integrate.cmake")
 
 macro(GenerateModule projectid)
 	add_library(${${projectid}_NAME} STATIC ${${projectid}_FILES})
@@ -33,7 +33,7 @@ endmacro()
 
 macro(Generate what projectid projectname foldergroup)
 	set(${projectid}_LOCATION "${${CMAKE_PROJECT_NAME}_PATH}")
-	include("${${projectid}_LOCATION}/cmake/intern/CompilerAndLinkerSettings.cmake")	
+	include("${${projectid}_LOCATION}/intern/CompilerAndLinkerSettings.cmake")	
 	
 	# Activate solution directory feature
 	set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -101,7 +101,7 @@ macro(Finalize projectid)
 		endif()
 	endforeach()
 	
-	include("${${projectid}_LOCATION}/cmake/intern/CompilerAndLinkerSettings.cmake")
+	include("${${projectid}_LOCATION}/intern/CompilerAndLinkerSettings.cmake")
 	FinalizeCompilerAndLinkerSettings(${projectid})	
 	set(${projectid}_FINALIZED ON)
 endmacro()
@@ -138,7 +138,7 @@ macro(GenerateCustomTargetMetaInfo what projectname projectid)
 	endif()
 	
 	ConfigureCompilerAndLinker(${projectid} ${what})
-	include("${${projectid}_LOCATION}/cmake/intern/CompilerAndLinkerSettings.cmake")
+	include("${${projectid}_LOCATION}/intern/CompilerAndLinkerSettings.cmake")
 	FinalizeCompilerAndLinkerSettings(${projectid})
 endmacro()
 
