@@ -81,15 +81,10 @@ macro(AddDependency projectid dependencyProjectName)
 endmacro()
 
 macro(Finalize projectid)
-	# Remove all spaces, tabs, return and carriage return at the beginning of the string.
-	string(REGEX REPLACE "^[ \t\r\n]+" "" deps "${${CMAKE_PROJECT_NAME}_INTEGRATED}")
-	# Remove all spaces, tabs, return and carriage return at the end of the string.
-	string(REGEX REPLACE "[ \t\r\n]+$" "" deps "${${CMAKE_PROJECT_NAME}_INTEGRATED}")
-	list(APPEND deps "${${projectid}_DEPS}")
-	message(STATUS "Finalized project: ${${projectid}_NAME} Depends on: ${deps}")	
-	add_dependencies(${${projectid}_NAME} "${deps}")
+	message(STATUS "Finalized project: ${${projectid}_NAME} Depends on: ${${projectid}_DEPS}")	
+	add_dependencies(${${projectid}_NAME} "${${projectid}_DEPS}")
 	
-	foreach(dep ${deps})
+	foreach(dep ${${projectid}_DEPS})
 		if(DEFINED ${${dep}_ID}_ISLIBRARY OR DEFINED ${${dep}_ID}_ISMODULE)
 			# assign public libraries from the dependency
 			target_link_libraries(${${projectid}_NAME} ${dep})
