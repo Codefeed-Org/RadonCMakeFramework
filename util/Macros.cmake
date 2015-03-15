@@ -124,7 +124,7 @@ macro(SubDirlist curdir result)
 endmacro()
 
 macro(AddPublicInclude projectid addpath)
-	set(${projectid}_PUBLIC_INCLUDES "${${projectid}_PUBLIC_INCLUDES} ${addpath}" CACHE INTERNAL "include directories")
+	set(${projectid}_PUBLIC_INCLUDES ${${projectid}_PUBLIC_INCLUDES} ${addpath} CACHE INTERNAL "include directories")
 	include_directories(${addpath})
 endmacro()
 
