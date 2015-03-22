@@ -135,8 +135,8 @@ macro(GenerateCustomTargetMetaInfo what projectname projectid)
 		set(${projectid}_ISEXECUTABLE ON CACHE INTERNAL "Project is an executable.")
 	endif()
 	
-	ConfigureCompilerAndLinker(${projectid} ${what})
 	include("${${projectid}_LOCATION}/intern/CompilerAndLinkerSettings.cmake")
+	ConfigureCompilerAndLinker(${projectid} ${what})
 	FinalizeCompilerAndLinkerSettings(${projectid})
 endmacro()
 
