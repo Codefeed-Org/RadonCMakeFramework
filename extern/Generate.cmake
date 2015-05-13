@@ -3,19 +3,6 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
-
-# Obtain Radon CMake framework root path to call the other scripts from there.
-# At this point the projectid is not set yet but the name of the cmake project
-# is available and all macros called in it's scope. 
-set(${CMAKE_PROJECT_NAME}_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
-# The following includes are the only exception where an other variable than
-# ${${projectid}_LOCATION} is used to access files of the framework.
-include("${${CMAKE_PROJECT_NAME}_PATH}/util/CMakeFunctionShortcut.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/util/Macros.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/util/git.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/util/svn.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/extern/Integrate.cmake")
-
 macro(GenerateModule projectid)
 	add_library(${${projectid}_NAME} STATIC ${${projectid}_FILES})
 	target_link_libraries(${${projectid}_NAME} ${${projectid}_LIBS})
@@ -34,9 +21,9 @@ macro(GenerateExecutable projectid)
 	set(${projectid}_ISEXECUTABLE ON CACHE INTERNAL "Project is an executable.")
 endmacro()
 
-macro(Generate what projectid projectname foldergroup)
+macro(SharedGenerate what projectid projectname foldergroup)
 	set(${projectid}_LOCATION "${${CMAKE_PROJECT_NAME}_PATH}")
-	include("${${projectid}_LOCATION}/intern/CompilerAndLinkerSettings.cmake")	
+	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/CompilerAndLinkerSettings.cmake")	
 	
 	# Activate solution directory feature
 	set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -45,7 +32,7 @@ macro(Generate what projectid projectname foldergroup)
 	set(${projectid}_NAME ${projectname} CACHE INTERNAL "Projectname of ${projectid}")
 	set(${projectid}_DEPS "" CACHE INTERNAL "Project specific dependencies of ${projectname}")
 	set(${projectid}_PUBLIC_INCLUDES "" CACHE INTERNAL "Project public include directories")
-		
+	
 	#
 	# Initialized compiler defines.
 	# This defines are public and will be delegated to projects which depend on this target.
@@ -63,6 +50,10 @@ macro(Generate what projectid projectname foldergroup)
 	
 	# binary output get D as postfix
 	set(CMAKE_DEBUG_POSTFIX D)	
+endmacro()
+
+macro(Generate what projectid projectname foldergroup)
+	SharedGenerate(${what} ${projectid} ${projectname} ${foldergroup})
 	
 	if(${what} STREQUAL "MODULE")
 		GenerateModule(${projectid})
@@ -76,8 +67,8 @@ macro(Generate what projectid projectname foldergroup)
 	set_property(TARGET ${projectname} PROPERTY FOLDER ${foldergroup})
 endmacro()
 
-macro(AddDependency projectid dependencyProjectName)
-	list(APPEND ${projectid}_DEPS ${dependencyProjectName})
+macro(AddDependency projectid)
+	set(${projectid}_DEPS ${${projectid}_DEPS} ${ARGN} CACHE INTERNAL "")
 endmacro()
 
 macro(Finalize projectid)
@@ -91,41 +82,21 @@ macro(Finalize projectid)
 			# assign public includes from the dependency
 			include_directories(${${${dep}_ID}_PUBLIC_INCLUDES})
 			# assign public defines from the dependency
-			list(APPEND ${projectid}_COMPILER_DEFINES "${${${dep}_ID}_COMPILER_DEFINES}")
-			list(APPEND ${projectid}_COMPILER_DEFINES_RELEASE "${${${dep}_ID}_COMPILER_DEFINES_RELEASE}")
-			list(APPEND ${projectid}_COMPILER_DEFINES_DEBUG "${${${dep}_ID}_COMPILER_DEFINES_DEBUG}")
-			list(APPEND ${projectid}_COMPILER_DEFINES_RELWITHDEBINFO "${${${dep}_ID}_COMPILER_DEFINES_RELWITHDEBINFO}")
-			list(APPEND ${projectid}_COMPILER_DEFINES_MINSIZEREL "${${${dep}_ID}_COMPILER_DEFINES_MINSIZEREL}")
+			AddPublicDefine(${projectid} ${${${dep}_ID}_COMPILER_DEFINES})
+			AddPublicTargetDefine(${projectid} RELEASE ${${${dep}_ID}_COMPILER_DEFINES_RELEASE})
+			AddPublicTargetDefine(${projectid} DEBUG ${${${dep}_ID}_COMPILER_DEFINES_DEBUG})
+			AddPublicTargetDefine(${projectid} RELWITHDEBINFO ${${${dep}_ID}_COMPILER_DEFINES_RELWITHDEBINFO})
+			AddPublicTargetDefine(${projectid} MINSIZEREL ${${${dep}_ID}_COMPILER_DEFINES_MINSIZEREL})
 		endif()
 	endforeach()
 	
-	include("${${projectid}_LOCATION}/intern/CompilerAndLinkerSettings.cmake")
+	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/CompilerAndLinkerSettings.cmake")
 	FinalizeCompilerAndLinkerSettings(${projectid})	
 	set(${projectid}_FINALIZED ON)
 endmacro()
 
-macro(GenerateCustomTargetMetaInfo what projectname projectid)
-	set(${projectid}_LOCATION "${${CMAKE_PROJECT_NAME}_PATH}")
-	set(${projectname}_ID ${projectid} CACHE INTERNAL "Projectid of ${projectname}")
-	set(${projectid}_NAME ${projectname} CACHE INTERNAL "Projectname of ${projectid}")
-	set(${projectid}_DEPS "" CACHE INTERNAL "Project specific dependencies of ${projectname}")
-	set(${projectid}_PUBLIC_INCLUDES "" CACHE INTERNAL "Project public include directories")
-	
-	#
-	# Initialized compiler defines.
-	# This defines are public and will be delegated to projects which depend on this target.
-	#
-	# This defines will be merged into all compiler builds.
-	set(${projectid}_COMPILER_DEFINES "" CACHE INTERNAL "Project public defines")
-	# This defines will be used for Debug target.
-	set(${projectid}_COMPILER_DEFINES_DEBUG "" CACHE INTERNAL "Project public defines")
-	# This defines will be used for Release target.
-	set(${projectid}_COMPILER_DEFINES_RELEASE "" CACHE INTERNAL "Project public defines")
-	# This defines will be used for "minimized Release" target.
-	set(${projectid}_COMPILER_DEFINES_RELMINSIZE "" CACHE INTERNAL "Project public defines")
-	# This defines will be used for "Release with debug infos" target.
-	set(${projectid}_COMPILER_DEFINES_RELWITHDEBINFO "" CACHE INTERNAL "Project public defines")
-	
+macro(GenerateCustomTargetMetaInfo what projectname projectid foldergroup)
+	SharedGenerate(${what} ${projectid} ${projectname} ${foldergroup})
 	
 	if(${what} STREQUAL "MODULE")
 		set(${projectid}_ISMODULE ON CACHE INTERNAL "Project is a module.")
@@ -135,11 +106,10 @@ macro(GenerateCustomTargetMetaInfo what projectname projectid)
 		set(${projectid}_ISEXECUTABLE ON CACHE INTERNAL "Project is an executable.")
 	endif()
 	
-	include("${${projectid}_LOCATION}/intern/CompilerAndLinkerSettings.cmake")
 	ConfigureCompilerAndLinker(${projectid} ${what})
-	FinalizeCompilerAndLinkerSettings(${projectid})
 endmacro()
 
-macro(FinalizeCustomTargetMetaInfo projectname foldergroup)
-	set_property(TARGET ${projectname} PROPERTY FOLDER ${foldergroup})
+macro(FinalizeCustomTargetMetaInfo projectid)
+	FinalizeCompilerAndLinkerSettings(${projectid})
+	set_property(TARGET ${${projectid}_NAME} PROPERTY FOLDER ${foldergroup})
 endmacro()

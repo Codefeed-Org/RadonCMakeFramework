@@ -129,13 +129,22 @@ macro(AddPublicInclude projectid addpath)
 endmacro()
 
 macro(AddPublicDefine projectid)
-	set(${projectid}_COMPILER_DEFINES "${${projectid}_COMPILER_DEFINES} ${ARGN}" CACHE INTERNAL "Project public defines")
+	set(${projectid}_COMPILER_DEFINES "${${projectid}_COMPILER_DEFINES};${ARGN}" CACHE INTERNAL "Project public defines")
 endmacro()
 
 macro(AddPublicTargetDefine projectid target)
-	set(${projectid}_COMPILER_DEFINES_${target} "${${projectid}_COMPILER_DEFINES_${target}} ${ARGN}" CACHE INTERNAL "Project public defines")
+	set(${projectid}_COMPILER_DEFINES_${target} "${${projectid}_COMPILER_DEFINES_${target}};${ARGN}" CACHE INTERNAL "Project public defines")
 endmacro()
 
 macro(AddPrivateDefine define)
 	add_definitions("-D${define}")
+endmacro()
+
+set(${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES "" CACHE INTERNAL "List of all source_dir passed to add_subdirectory.")
+
+macro(rcf_add_subdirectory_once source_dir)
+	if(NOT ";${source_dir};" MATCHES ";${${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES};")
+		add_subdirectory(${source_dir} ${ARGN})
+		list(APPEND ${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES ${source_dir})
+	endif()
 endmacro()

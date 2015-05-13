@@ -6,6 +6,19 @@
 # It will be included by extern/Integrate.cmake 
 # and move most of the configuration into Radon CMake framework scope.
 #
+
+# Obtain Radon CMake framework root path to call the other scripts from there.
+# At this point the projectid is not set yet but the name of the cmake project
+# is available and all macros called in it's scope. 
+set(${CMAKE_PROJECT_NAME}_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+# The following includes are the only exception where an other variable than
+# ${${projectid}_LOCATION} is used to access files of the framework.
+include("${${CMAKE_PROJECT_NAME}_PATH}/util/CMakeFunctionShortcut.cmake")
+include("${${CMAKE_PROJECT_NAME}_PATH}/util/Macros.cmake")
+include("${${CMAKE_PROJECT_NAME}_PATH}/intern/FileVersionSystem.cmake")
+include("${${CMAKE_PROJECT_NAME}_PATH}/intern/Download.cmake")
+include("${${CMAKE_PROJECT_NAME}_PATH}/extern/Integrate.cmake")
+
 macro(rcf_addlocation projectid protocol location)
 	set(${projectid}_Locations ${${projectid}_Locations} "${protocol} ${location}")
 endmacro()
@@ -19,7 +32,7 @@ macro(ConfigureProject projectid path)
 	set(${projectid}_PUBLIC_INCLUDES "" CACHE INTERNAL "include directories")
 	if ((DEFINED ${projectid}_FINALIZED AND NOT ${${projectid}_FINALIZED}) OR
 		NOT DEFINED ${projectid}_FINALIZED)
-		add_subdirectory(${${projectid}_LOCATION} "${PROJECT_BINARY_DIR}/${projectid}/")
+		rcf_add_subdirectory_once(${${projectid}_LOCATION} "${PROJECT_BINARY_DIR}/${projectid}/")
 	endif()
 endmacro()
 
@@ -58,6 +71,35 @@ macro(FailSafe projectid projectname)
 	endif()
 endmacro()
 
+macro(rcf_obtain_project projectid outdir)
+	foreach(entry ${${projectid}_Locations})
+		separate_arguments(entry)
+		list(GET entry 0 protocol)
+		list(GET entry 1 location)
+		if(${protocol} STREQUAL "file")
+			if(EXISTS "${location}")
+				set(outdir ${location})
+			else()
+				message(AUTHOR_WARNING "${projectname} '${location}' doesn't exists !")
+			endif()
+		elseif(${protocol} STREQUAL "env")
+			if(EXISTS "$ENV{${location}}/")
+				set(outdir "$ENV{${location}}/")
+			else()
+				message(AUTHOR_WARNING "Add user or system environment variable ${environmentname} !")
+			endif()
+		elseif(${protocol} STREQUAL "download")
+			rcf_download(${location} ${projectid} outdir)
+		else()#file version system
+			rcf_getrepo(${location} ${protocol} ${projectid} outdir)
+		endif()
+		
+		if(EXISTS ${outdir})
+			break()
+		endif()
+	endforeach()
+endmacro()
+
 # projectid = will be used as pre-name for all variables
 # projectname = will be used as output in the option description
 # environmentname = will be used as key for the search in the environment variables
@@ -71,33 +113,13 @@ macro(Integrate projectid projectname environmentname)
 		option(${projectid}_USE "Include ${projectname} into the project." ON)	
 		
 		if(${projectid}_USE)
-			foreach(entry ${${projectid}_Locations})
-				separate_arguments(entry)
-				list(GET entry 0 protocol)
-				list(GET entry 1 location)
-				if(${protocol} STREQUAL "file")
-					if(EXISTS "${location}")
-						set(outdir ${location})
-					else()
-						message(AUTHOR_WARNING "${projectname} '${location}' doesn't exists !")
-					endif()
-				elseif(${protocol} STREQUAL "env")
-					if(EXISTS "$ENV{${location}}/")
-						set(outdir "$ENV{${location}}/")
-					else()
-						message(AUTHOR_WARNING "Add user or system environment variable ${environmentname} !")
-					endif()
-				else()
-					GetRepo(${location} ${protocol} ${projectid})
-					GeneratePath(${projectid} outdir)
-				endif()
-				
-				if(EXISTS ${outdir})
-					FoundProject(${projectid} ${projectname} ${outdir})
-				else()
-					FailSafe(${projectid} ${projectname})
-				endif()
-			endforeach()
+			rcf_obtain_project(${projectid} outdir)
+			message(STATUS " found ${outdir}")
+			if(EXISTS ${outdir})
+				FoundProject(${projectid} ${projectname} ${outdir})
+			else()
+				FailSafe(${projectid} ${projectname})
+			endif()			
 		endif()
 	endif()
 

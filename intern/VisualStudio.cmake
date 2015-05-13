@@ -134,13 +134,10 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		#
 		if ("${CMAKE_GENERATOR}" MATCHES "Visual Studio")
 		  foreach (config ${CMAKE_CONFIGURATION_TYPES})
-			string(TOUPPER "${config}" config_upper)
-			set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${config_upper}
-			  "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-			set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${config_upper}
-			  "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
-			set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${config_upper}
-			  "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+			string(TOUPPER ${config} config_upper)
+			set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${config_upper} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+			set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${config_upper} ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY})
+			set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${config_upper} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 		  endforeach ()
 		endif ()	
 	endif()
