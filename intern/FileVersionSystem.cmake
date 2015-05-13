@@ -30,9 +30,9 @@ macro(GIT_GET_REVISION dir variable)
   execute_process(COMMAND ${GIT_EXECUTABLE} -C ${dir} rev-list HEAD --count
 	OUTPUT_VARIABLE ${variable}
 	OUTPUT_STRIP_TRAILING_WHITESPACE)
-	IF("${variable}" STREQUAL "")
+	IF(${variable} STREQUAL "")
 		SET(${variable} "0")
-	ENDIF("${variable}" STREQUAL "")
+	ENDIF()
 endmacro(GIT_GET_REVISION)
 
 macro(Subversion_GET_REVISION dir variable)
@@ -41,9 +41,9 @@ macro(Subversion_GET_REVISION dir variable)
 	OUTPUT_STRIP_TRAILING_WHITESPACE)
   STRING(REGEX REPLACE "^(.*\n)?Revision: ([^\n]+).*"
 	"\\2" ${variable} "${${variable}}")
-	IF("${variable}" STREQUAL "")
+	IF(${variable} STREQUAL "")
 		SET(${variable} "0")
-	ENDIF("${variable}" STREQUAL "")
+	ENDIF()
 endmacro(Subversion_GET_REVISION)
 
 #

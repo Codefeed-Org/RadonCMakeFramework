@@ -73,7 +73,9 @@ endmacro()
 
 macro(Finalize projectid)
 	message(STATUS "Finalized project: ${${projectid}_NAME} Depends on: ${${projectid}_DEPS}")	
-	add_dependencies(${${projectid}_NAME} "${${projectid}_DEPS}")
+	if(NOT ${${projectid}_DEPS} STREQUAL "")
+		add_dependencies(${${projectid}_NAME} "${${projectid}_DEPS}")
+	endif()
 	
 	foreach(dep ${${projectid}_DEPS})
 		if(DEFINED ${${dep}_ID}_ISLIBRARY OR DEFINED ${${dep}_ID}_ISMODULE)
