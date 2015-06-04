@@ -75,7 +75,7 @@ macro(Finalize projectid)
 	message(STATUS "Finalized project: ${${projectid}_NAME} Depends on: ${${projectid}_DEPS}")	
 	list(LENGTH ${projectid}_DEPS count)
 	if(${count} GREATER 0)
-		add_dependencies(${${projectid}_NAME} "${${projectid}_DEPS}")
+		add_dependencies(${${projectid}_NAME} ${${projectid}_DEPS})
 	endif()
 	
 	foreach(dep ${${projectid}_DEPS})
