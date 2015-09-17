@@ -1,3 +1,9 @@
+function(AddResources projectid location destination)
+    add_custom_command(TARGET ${${projectid}_NAME} 
+        PRE_BUILD 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${location} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${destination})
+endfunction()
+
 function(AddSourceDirectory var)
 	# - Add a directory to the current project.
 	string(REGEX REPLACE "/" "\\\\" locale_SourceGroupPath ${ARGV2} )
