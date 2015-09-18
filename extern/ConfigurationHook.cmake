@@ -105,7 +105,9 @@ endmacro()
 # environmentname = will be used as key for the search in the environment variables
 macro(Integrate projectid projectname environmentname)
 	# check if initialization order is valid
-	if(DEFINED ${projectid}_FOUND AND NOT DEFINED ${projectid}_FINALIZED)
+    get_property(finalized GLOBAL PROPERTY "${projectid}_FINALIZED")
+
+	if(DEFINED ${projectid}_FOUND AND "${finalized}" STREQUAL "")
 		message(FATAL_ERROR "${projectname} is involved in an circular dependency. Please track the project which call Integrate() for ${projectname} and move it behind Finalize().")
 	endif()
 	

@@ -94,12 +94,7 @@ macro(Finalize projectid)
 	
 	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/CompilerAndLinkerSettings.cmake")
 	FinalizeCompilerAndLinkerSettings(${projectid})	
-    get_directory_property(hasParent PARENT_DIRECTORY)
-    if(hasParent)
-        set(${projectid}_FINALIZED ON PARENT_SCOPE)
-    else()
-        set(${projectid}_FINALIZED ON)
-    endif()
+    set_property(GLOBAL PROPERTY "${projectid}_FINALIZED" ON)
 	message(STATUS "Finalized project: ${${projectid}_NAME} Depends on: ${${projectid}_DEPS}")	    
 endmacro()
 
