@@ -48,8 +48,9 @@ macro(SharedGenerate what projectid projectname foldergroup)
 	# This defines will be used for "Release with debug infos" target.
 	set(${projectid}_COMPILER_DEFINES_RELWITHDEBINFO "" CACHE INTERNAL "Project public defines")
 	
-	# binary output get D as postfix
-	set(CMAKE_DEBUG_POSTFIX D)	
+	set(CMAKE_DEBUG_POSTFIX D)
+    set(CMAKE_RELMINSIZE_POSTFIX RM)
+    set(CMAKE_RELWITHDEBINFO_POSTFIX RD)
 endmacro()
 
 macro(Generate what projectid projectname foldergroup)
