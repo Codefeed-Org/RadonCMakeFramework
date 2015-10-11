@@ -5,7 +5,9 @@
 #
 macro(ConfigureCompilerAndLinkerXCode projectid buildtype)
 	if(CMAKE_GENERATOR STREQUAL Xcode)
-		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -msse4.2")		
+		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -msse4.2")
+		set(CMAKE_C_STANDARD 11)
+		set(CMAKE_CXX_STANDARD 14)
 	endif()
 endmacro()
 
