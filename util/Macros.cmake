@@ -1,7 +1,13 @@
 function(AddResources projectid location destination)
+    if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${location})
+        set(mode copy_directory)
+    else()
+        set(mode copy_if_different)
+    endif()
+    
     add_custom_command(TARGET ${${projectid}_NAME} 
-        PRE_BUILD 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${location} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${destination})
+        POST_BUILD 
+        COMMAND ${CMAKE_COMMAND} -E ${mode} ${CMAKE_CURRENT_SOURCE_DIR}/${location} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${destination})
 endfunction()
 
 function(AddSourceDirectory var)
