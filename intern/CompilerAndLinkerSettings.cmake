@@ -103,23 +103,8 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	#
 	# gather hardware dependent information
 	#
-	# Figure out if the target architecture is 32Bit or 64Bit.
-	if(CMAKE_SIZEOF_VOID_P EQUAL 4)
-		set(${projectid}_COMPILEDFORARCHITECTURE "_32Bit")
-	elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
-		set(${projectid}_COMPILEDFORARCHITECTURE "_64Bit")
-	else()
-		set(${projectid}_COMPILEDFORARCHITECTURE "Unknown")
-	endif()
-
-	#endianness
-	include(TestBigEndian)
-	TEST_BIG_ENDIAN(ENDIANNESS)
-	IF(${ENDIANNESS})
-		set(${projectid}_ENDIANNESS "Big")
-	else()
-		set(${projectid}_ENDIANNESS "Little")
-	endif()
+    set(${projectid}_COMPILEDFORARCHITECTURE ${${CMAKE_PROJECT_NAME}_COMPILEDFORARCHITECTURE})
+    set(${projectid}_ENDIANNESS ${${CMAKE_PROJECT_NAME}_ENDIANNESS})
 endmacro()
 
 macro(FinalizeCompilerAndLinkerSettings projectid)

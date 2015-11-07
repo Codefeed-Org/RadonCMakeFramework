@@ -18,6 +18,9 @@ include("${${CMAKE_PROJECT_NAME}_PATH}/util/Macros.cmake")
 include("${${CMAKE_PROJECT_NAME}_PATH}/intern/FileVersionSystem.cmake")
 include("${${CMAKE_PROJECT_NAME}_PATH}/intern/Download.cmake")
 include("${${CMAKE_PROJECT_NAME}_PATH}/extern/Integrate.cmake")
+include("${${CMAKE_PROJECT_NAME}_PATH}/intern/SystemInfo.cmake")
+
+rcf_getsysteminfos()
 
 macro(rcf_addlocation projectid protocol location)
 	set(${projectid}_Locations ${${projectid}_Locations} "${protocol} ${location}")
