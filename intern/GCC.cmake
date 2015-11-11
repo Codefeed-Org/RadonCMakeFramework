@@ -5,7 +5,7 @@
 #
 macro(ConfigureCompilerAndLinkerGCC projectid buildtype)
 	if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
-		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -std=c++11 -msse4.2 -Wno-unknown-pragmas")
+		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -std=c++11 -Wno-unknown-pragmas")
 	endif()
 endmacro()
 
