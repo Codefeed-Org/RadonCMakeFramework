@@ -11,6 +11,9 @@
 # At this point the projectid is not set yet but the name of the cmake project
 # is available and all macros called in it's scope. 
 set(${CMAKE_PROJECT_NAME}_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+message(STATUS "Check for newest version of Radon CMake framework.")
+execute_process(COMMAND "${GIT_EXECUTABLE}" "pull" "-q"
+                WORKING_DIRECTORY "${${CMAKE_PROJECT_NAME}_PATH}")
 # The following includes are the only exception where an other variable than
 # ${${projectid}_LOCATION} is used to access files of the framework.
 include("${${CMAKE_PROJECT_NAME}_PATH}/util/CMakeFunctionShortcut.cmake")
