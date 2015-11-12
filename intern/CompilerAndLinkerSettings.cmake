@@ -3,7 +3,10 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
-	
+include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualStudio.cmake")
+include("${${CMAKE_PROJECT_NAME}_PATH}/intern/GCC.cmake")
+include("${${CMAKE_PROJECT_NAME}_PATH}/intern/XCode.cmake")
+
 macro(ConfigureCompilerAndLinker projectid buildtype)
 	#
 	# Options for general compiler features.
@@ -14,12 +17,31 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	option(${projectid}_COMPILER_USE_EXCEPTION "Activate exceptions(Default: off)" OFF)
 	# Most compiler support a couple of intrinsic functions which will replace standard C routines(e.g. memcpy).
 	option(${projectid}_COMPILER_USE_INTRINSIC "Activate intrinsic functions(Default: on)" ON)
+    if(${${projectid}_COMPILER_USE_INTRINSIC})
+        option(${projectid}_COMPILER_USE_INTRINSIC_MMX "Activate MMX intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SSE "Activate SSE intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SSE2 "Activate SSE2 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SSE3 "Activate SSE3 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SSSE3 "Activate SSSE3 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SSE41 "Activate SSE4.1 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SSE42 "Activate SSE4.2 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SSE4A "Activate SSE4A intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_AVX "Activate AVX intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_AVX2 "Activate AVX2 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_AVX512 "Activate AVX512 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_FMA3 "Activate FMA3 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_FMA4 "Activate FMA4 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_NEON "Activate NEON intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_AES "Activate AES intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_XOP "Activate XOP intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SHA "Activate SHA intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_CPUID "Activate CPUID intrinsic functions(Default: on)" ON)
+    endif()
 	# Many bugs exists because this switch is turned off.
 	option(${projectid}_COMPILER_TREAT_WARNINGS_AS_ERROR "Treat warnings as error(Default: on)" ON)
 	# A project which use dynamic linking need the libcrt.so/msvcrt.dll shared library on the target system to run.
 	# Static linking increase the size of the binary but don't need further shared libraries.
 	option(${projectid}_COMPILER_STATIC_LINKED_CRT "Told the compiler to compile the C runtime library functions or link them." OFF)
-	#
 	#option(${projectid}_COMPILER_WARNING)
 	
 	#
@@ -91,20 +113,16 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	# Include all compiler files.
 	# Each include must handle it self.
 	#
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualStudio.cmake")
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/GCC.cmake")
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/XCode.cmake")
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/UnixMakefile.cmake")
 	ConfigureCompilerAndLinkerVS(${projectid} ${buildtype})
 	ConfigureCompilerAndLinkerGCC(${projectid} ${buildtype})
 	ConfigureCompilerAndLinkerXCode(${projectid} ${buildtype})
-	ConfigureCompilerAndLinkerUnixMakefile(${projectid} ${buildtype})
 
 	#
 	# gather hardware dependent information
 	#
     set(${projectid}_COMPILEDFORARCHITECTURE ${${CMAKE_PROJECT_NAME}_COMPILEDFORARCHITECTURE})
     set(${projectid}_ENDIANNESS ${${CMAKE_PROJECT_NAME}_ENDIANNESS})
+    
 endmacro()
 
 macro(FinalizeCompilerAndLinkerSettings projectid)
@@ -116,14 +134,9 @@ macro(FinalizeCompilerAndLinkerSettings projectid)
 
 	# following macros will attach the defines to the compiler targets in the format
 	# they need them
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualStudio.cmake")
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/GCC.cmake")
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/XCode.cmake")
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/UnixMakefile.cmake")
 	ProcessDefinesVS(${projectid})
 	ProcessDefinesGCC(${projectid})
 	ProcessDefinesXCode(${projectid})
-	ProcessDefinesUnixMakefile(${projectid})
 	
 	set(CMAKE_C_FLAGS ${${projectid}_COMPILER_FLAGS})
 	set(CMAKE_C_FLAGS_DEBUG ${${projectid}_COMPILER_FLAGS_DEBUG})

@@ -3,8 +3,11 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
+include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualGDB.cmake")
+
 macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 	if(MSVC)
+        CheckIntrinsicSupportVS(${projectid})
 		#
 		# Options for general compiler features.
 		#
@@ -165,4 +168,77 @@ macro(ProcessDefinesVS projectid)
 			set(${projectid}_COMPILER_FLAGS_RELWITHDEBINFO "${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO} /D${flag}")
 		endforeach()
 	endif()
+endmacro()
+
+macro(CheckIntrinsicSupportVS projectid)
+    CHECK_INCLUDE_FILES(mmintrin.h HAVE_MMINTRIN_H)
+    if(NOT HAVE_MMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_MMX OFF CACHE BOOL "Activate MMX intrinsic functions(Default: on)" FORCE)   
+    endif()
+    
+    CHECK_INCLUDE_FILES(xmmintrin.h HAVE_XMMINTRIN_H)
+    if(NOT HAVE_XMMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_SSE OFF CACHE BOOL "Activate SSE intrinsic functions(Default: on)" FORCE)    
+    endif()
+    
+    CHECK_INCLUDE_FILES(emmintrin.h HAVE_EMMINTRIN_H)
+    if(NOT HAVE_EMMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_SSE2 OFF CACHE BOOL "Activate SSE2 intrinsic functions(Default: on)" FORCE)
+    endif()
+    
+    CHECK_INCLUDE_FILES(tmmintrin.h HAVE_TMMINTRIN_H)
+    if(NOT HAVE_TMMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_SSSE3 OFF CACHE BOOL "Activate SSSE3 intrinsic functions(Default: on)" FORCE)
+    endif()
+
+    CHECK_INCLUDE_FILES(pmmintrin.h HAVE_PMMINTRIN_H)
+    if(NOT HAVE_PMMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_SSE3 OFF CACHE BOOL "Activate SSE3 intrinsic functions(Default: on)" FORCE)    
+    endif()
+    
+    CHECK_INCLUDE_FILES(wmmintrin.h HAVE_WMMINTRIN_H)
+    if(NOT HAVE_WMMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_AES OFF CACHE BOOL "Activate AES intrinsic functions(Default: on)" FORCE)
+    endif()
+    
+    CHECK_INCLUDE_FILES(smmintrin.h HAVE_SMMINTRIN_H)
+    if(NOT HAVE_SMMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_SSE41 OFF CACHE BOOL "Activate SSE4.1 intrinsic functions(Default: on)" FORCE)
+    endif()    
+    
+    CHECK_INCLUDE_FILES(immintrin.h HAVE_IMMINTRIN_H)
+    if(NOT HAVE_IMMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_AVX OFF CACHE BOOL "Activate AVX intrinsic functions(Default: on)" FORCE)    
+        set(${projectid}_COMPILER_USE_INTRINSIC_AVX2 OFF CACHE BOOL "Activate AVX2 intrinsic functions(Default: on)" FORCE)
+    endif()  
+
+    CHECK_INCLUDE_FILES("immintrin.h;ammintrin.h" HAVE_AMMINTRIN_H)
+    if(NOT HAVE_AMMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_XOP OFF CACHE BOOL "Activate XOP intrinsic functions(Default: on)" FORCE)
+        set(${projectid}_COMPILER_USE_INTRINSIC_FMA3 OFF CACHE BOOL "Activate FMA3 intrinsic functions(Default: on)" FORCE)
+        set(${projectid}_COMPILER_USE_INTRINSIC_FMA4 OFF CACHE BOOL "Activate FMA4 intrinsic functions(Default: on)" FORCE)
+    endif() 
+    
+    CHECK_INCLUDE_FILES(nmmintrin.h HAVE_NMMINTRIN_H)
+    if(NOT HAVE_NMMINTRIN_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_SSE42 OFF CACHE BOOL "Activate SSE4.2 intrinsic functions(Default: on)" FORCE)
+    endif()  
+    
+    CHECK_INCLUDE_FILES(arm_neon.h arm64_neon.h HAVE_ARMNEON_H)
+    if(NOT HAVE_ARMNEON_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_NEON OFF CACHE BOOL "Activate NEON intrinsic functions(Default: on)" FORCE)    
+    endif() 
+    
+    CHECK_INCLUDE_FILES(intrin.h HAVE_INTRIN_H)
+    if(HAVE_INTRIN_H)
+        CHECK_FUNCTION_EXISTS(_mm_stream_ss HAVE_SSE4A)
+        if (NOT HAVE_SSE4A)
+            set(${projectid}_COMPILER_USE_INTRINSIC_SSE4A OFF CACHE BOOL "Activate SSE4A intrinsic functions(Default: on)" FORCE)        
+        endif()
+    else()
+        set(${projectid}_COMPILER_USE_INTRINSIC_CPUID OFF CACHE BOOL "Activate CPUID intrinsic functions(Default: on)" FORCE)        
+    endif()  
+
+    set(${projectid}_COMPILER_USE_INTRINSIC_AVX512 OFF CACHE BOOL "Activate AVX512 intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_SHA OFF CACHE BOOL "Activate SHA intrinsic functions(Default: on)" FORCE)
 endmacro()
