@@ -4,7 +4,7 @@
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
 include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualGDB.cmake")
-include(CHECK_INCLUDE_FILES)
+include(CheckIncludeFiles)
 
 macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 	if(MSVC)
