@@ -13,18 +13,19 @@ set(VGDB_USERNAME "pi" CACHE STRING "Username of the target linux machine.")
 set(VGDB_ARGUMENTS "" CACHE STRING "Additional arguments which should passed to remote cmake.")
 
 if(NOT TARGET VGDB)
+    # This target will be generated to upload the CMakeFiles.txt, directory content and generate the remote solution
     set(HOSTNAME ${VGDB_HOSTNAME})
     set(USERNAME ${VGDB_USERNAME})
     set(ARGUMENTS ${VGDB_ARGUMENTS})
     set(LOCALDIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-    configure_file("${${CMAKE_PROJECT_NAME}_PATH}/intern/Debug.vgdbsettings.template" "${CMAKE_CURRENT_BINARY_DIR}/VGDB-Debug.vgdbsettings" @ONLY)
-    configure_file("${${CMAKE_PROJECT_NAME}_PATH}/intern/Release.vgdbsettings.template" "${CMAKE_CURRENT_BINARY_DIR}/VGDB-Release.vgdbsettings" @ONLY)
-    add_custom_target(VGDB ${VSGDB_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/VGDB-Debug.vgdbsettings"
+    configure_file("${${CMAKE_PROJECT_NAME}_PATH}/intern/MasterDebug.vgdbsettings.template" "${CMAKE_CURRENT_BINARY_DIR}/MasterVGDB-Debug.vgdbsettings" @ONLY)
+    configure_file("${${CMAKE_PROJECT_NAME}_PATH}/intern/MasterRelease.vgdbsettings.template" "${CMAKE_CURRENT_BINARY_DIR}/MasterVGDB-Release.vgdbsettings" @ONLY)
+    add_custom_target(VGDB ${VSGDB_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/MasterVGDB-Debug.vgdbsettings"
                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                      SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt)
-    set(VGDB_TARGET_ALL ON)
 endif()
 
+#Add additional targets to map targets from the solution.
 macro(GenerateVGDBTarget projectid)
     set(${projectid}_VGDB_HOSTNAME ${VGDB_HOSTNAME})    
     set(${projectid}_VGDB_USERNAME ${VGDB_USERNAME})        
