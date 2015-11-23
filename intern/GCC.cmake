@@ -43,6 +43,11 @@ macro(CheckIntrinsicSupportGCC projectid)
     else()
         set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -mfloat-abi=softfp -mpfu=neon")
     endif() 
+    
+    CHECK_INCLUDE_FILES(cpuid.h HAVE_CPUID_H)
+    if(NOT HAVE_CPUID_H)
+        set(${projectid}_COMPILER_USE_INTRINSIC_CPUID OFF CACHE BOOL "Activate CPUID intrinsic functions(Default: on)" FORCE)    
+    endif()     
 
     set(${projectid}_COMPILER_USE_INTRINSIC_MMX OFF CACHE BOOL "Activate MMX intrinsic functions(Default: on)" FORCE)
     set(${projectid}_COMPILER_USE_INTRINSIC_SSE OFF CACHE BOOL "Activate SSE intrinsic functions(Default: on)" FORCE)
