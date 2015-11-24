@@ -21,10 +21,12 @@
       <LocalDirectory>@LOCALDIRECTORY@</LocalDirectory>
       <RemoteDirectory>@REMOTEDIRECTORY@</RemoteDirectory>
       <FileMasks>
+      @FILEMASKS@
       </FileMasks>
       <TransferNewFilesOnly>true</TransferNewFilesOnly>
       <IncludeSubdirectories>true</IncludeSubdirectories>
       <SelectedDirectories>
+      @SELECTEDDIRECTORIES@
       </SelectedDirectories>
     </MainSourceTransferCommand>
     <AllowChangingHostForMainCommands>false</AllowChangingHostForMainCommands>

@@ -34,7 +34,9 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
         option(${projectid}_COMPILER_USE_INTRINSIC_NEON "Activate NEON intrinsic functions(Default: on)" ON)
         option(${projectid}_COMPILER_USE_INTRINSIC_AES "Activate AES intrinsic functions(Default: on)" ON)
         option(${projectid}_COMPILER_USE_INTRINSIC_XOP "Activate XOP intrinsic functions(Default: on)" ON)
-        option(${projectid}_COMPILER_USE_INTRINSIC_SHA "Activate SHA intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SHA1 "Activate SHA128 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SHA2 "Activate SHA256 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_CRC32 "Activate CRC32 intrinsic functions(Default: on)" ON)
         option(${projectid}_COMPILER_USE_INTRINSIC_CPUID "Activate CPUID intrinsic functions(Default: on)" ON)
         mark_as_advanced(FORCE ${projectid}_COMPILER_USE_INTRINSIC_MMX ${projectid}_COMPILER_USE_INTRINSIC_SSE
             ${projectid}_COMPILER_USE_INTRINSIC_SSE2 ${projectid}_COMPILER_USE_INTRINSIC_SSE3
@@ -44,7 +46,8 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
             ${projectid}_COMPILER_USE_INTRINSIC_AVX512 ${projectid}_COMPILER_USE_INTRINSIC_FMA3
             ${projectid}_COMPILER_USE_INTRINSIC_FMA4 ${projectid}_COMPILER_USE_INTRINSIC_NEON
             ${projectid}_COMPILER_USE_INTRINSIC_AES ${projectid}_COMPILER_USE_INTRINSIC_XOP
-            ${projectid}_COMPILER_USE_INTRINSIC_SHA ${projectid}_COMPILER_USE_INTRINSIC_CPUID)
+            ${projectid}_COMPILER_USE_INTRINSIC_SHA1 ${projectid}_COMPILER_USE_INTRINSIC_SHA2
+            ${projectid}_COMPILER_USE_INTRINSIC_CRC32 ${projectid}_COMPILER_USE_INTRINSIC_CPUID)
     endif()
 	# Many bugs exists because this switch is turned off.
 	option(${projectid}_COMPILER_TREAT_WARNINGS_AS_ERROR "Treat warnings as error(Default: on)" ON)

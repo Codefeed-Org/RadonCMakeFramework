@@ -4,11 +4,16 @@
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
 include(CheckIncludeFiles)
+include(ProcessorCount)
 
 macro(ConfigureCompilerAndLinkerGCC projectid buildtype)
 	if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         CheckIntrinsicSupportGCC(${projectid})
-		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -std=c++11 -march=native -Wno-unknown-pragmas")
+        ProcessorCount(Cores)
+        if(NOT Cores EQUAL 0)
+            set(MPCFlag " -j ${Cores} ")
+        endif()
+		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -std=c++11 -march=native -Wno-unknown-pragmas ${MPCFlag}")
 	endif()
 endmacro()
 
@@ -64,5 +69,7 @@ macro(CheckIntrinsicSupportGCC projectid)
     set(${projectid}_COMPILER_USE_INTRINSIC_FMA4 OFF CACHE BOOL "Activate FMA4 intrinsic functions(Default: on)" FORCE)
     set(${projectid}_COMPILER_USE_INTRINSIC_AES OFF CACHE BOOL "Activate AES intrinsic functions(Default: on)" FORCE)
     set(${projectid}_COMPILER_USE_INTRINSIC_XOP OFF CACHE BOOL "Activate XOP intrinsic functions(Default: on)" FORCE)
-    set(${projectid}_COMPILER_USE_INTRINSIC_SHA OFF CACHE BOOL "Activate SHA intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_SHA1 OFF CACHE BOOL "Activate SHA128 intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_SHA2 OFF CACHE BOOL "Activate SHA256 intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_CRC32 OFF CACHE BOOL "Activate CRC32 intrinsic functions(Default: on)" FORCE)
 endmacro()

@@ -241,5 +241,7 @@ macro(CheckIntrinsicSupportVS projectid)
     endif()  
 
     set(${projectid}_COMPILER_USE_INTRINSIC_AVX512 OFF CACHE BOOL "Activate AVX512 intrinsic functions(Default: on)" FORCE)
-    set(${projectid}_COMPILER_USE_INTRINSIC_SHA OFF CACHE BOOL "Activate SHA intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_SHA1 OFF CACHE BOOL "Activate SHA128 intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_SHA2 OFF CACHE BOOL "Activate SHA256 intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_CRC32 OFF CACHE BOOL "Activate CRC32 intrinsic functions(Default: on)" FORCE)
 endmacro()
