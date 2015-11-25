@@ -4,16 +4,11 @@
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
 include(CheckIncludeFiles)
-include(ProcessorCount)
 
 macro(ConfigureCompilerAndLinkerGCC projectid buildtype)
 	if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         CheckIntrinsicSupportGCC(${projectid})
-        ProcessorCount(Cores)
-        if(NOT Cores EQUAL 0)
-            set(MPCFlag " -j ${Cores} ")
-        endif()
-		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -std=c++11 -march=native -Wno-unknown-pragmas ${MPCFlag}")
+		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -std=c++11 -march=native -Wno-unknown-pragmas")
 	endif()
 endmacro()
 

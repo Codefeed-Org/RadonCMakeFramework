@@ -43,7 +43,7 @@
         <UserName>@USERNAME@</UserName>
       </RemoteHost>
       <Command>cmake</Command>
-      <Arguments>--build . --target @TARGETNAME@ --config Debug</Arguments>
+      <Arguments>--build . --target @TARGETNAME@ --config Debug -- @BUILDPARAM@</Arguments>
       <WorkingDirectory>@REMOTEDIRECTORY@/build/remote</WorkingDirectory>
       <Environment>
         <Records />
