@@ -32,6 +32,7 @@ macro(SharedGenerate what projectid projectname foldergroup)
 	set(${projectid}_NAME ${projectname} CACHE INTERNAL "Projectname of ${projectid}")
 	set(${projectid}_DEPS "" CACHE INTERNAL "Project specific dependencies of ${projectname}")
 	set(${projectid}_PUBLIC_INCLUDES "" CACHE INTERNAL "Project public include directories")
+    set(${projectid}_WHAT ${what} CACHE INTERNAL "Buildtype of ${projectname}")
 	
 	#
 	# Initialized compiler defines.
@@ -111,7 +112,7 @@ macro(Finalize projectid)
 	endforeach()
 	
 	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/CompilerAndLinkerSettings.cmake")
-	FinalizeCompilerAndLinkerSettings(${projectid})	
+	FinalizeCompilerAndLinkerSettings(${projectid} )	
     set_property(GLOBAL PROPERTY "${projectid}_FINALIZED" ON)
 	message(STATUS "Finalized project: ${${projectid}_NAME} Depends on: ${${projectid}_DEPS}")
     SharedFinalize(${projectid})
@@ -128,7 +129,7 @@ macro(GenerateCustomTargetMetaInfo what projectname projectid foldergroup)
 		set(${projectid}_ISEXECUTABLE ON CACHE INTERNAL "Project is an executable.")
 	endif()
 	
-	ConfigureCompilerAndLinker(${projectid} ${what})
+	ConfigureCompilerAndLinker(${projectid})
 endmacro()
 
 macro(FinalizeCustomTargetMetaInfo projectid)

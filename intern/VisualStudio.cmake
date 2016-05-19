@@ -31,8 +31,6 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 
 		if(${${projectid}_COMPILER_TREAT_WARNINGS_AS_ERROR})
 			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /WX")
-		else()
-			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /WX-")
 		endif()
 		
 		if(${buildtype} STREQUAL "EXECUTABLE")
@@ -130,8 +128,8 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		
 		# OPT:REF = Remove unused references.
 		# OPT:ICF = Combine same code chunks into one and point to the shared code.
-		set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
-		set(${projectid}_COMPILER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /OPT:REF /OPT:ICF")
+		set(${projectid}_LINKER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
+		set(${projectid}_LINKER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /OPT:REF /OPT:ICF")
 		
 		#
 		# fix visual studio output directory
