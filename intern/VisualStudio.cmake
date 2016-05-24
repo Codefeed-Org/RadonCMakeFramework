@@ -69,7 +69,12 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 				set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /wd4275")
 			endif()
 		endif()
-		
+        
+        if(NOT ${${projectid}_COMPILER_USE_EXCEPTION})
+            # noexcept will rise a warning if exception handling is disabled
+            set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /wd4577")
+		endif()
+        
 		#
 		# Compiler specific settings
 		#
