@@ -3,10 +3,10 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
-if (NOT DEFINED ${CMAKE_PROJECT_NAME}_INCLUDED)
+if (NOT DEFINED RCF_INCLUDED)
 
-set(${CMAKE_PROJECT_NAME}_INCLUDED "")
-set(${CMAKE_PROJECT_NAME}_INTEGRATED "" CACHE INTERNAL "Integrated projects")
+set(RCF_INCLUDED "")
+set(RCF_INTEGRATED "" CACHE INTERNAL "Integrated projects")
 
 find_package(Git REQUIRED)
 set(repo "https://github.com/tak2004/RadonCMakeFramework.git")

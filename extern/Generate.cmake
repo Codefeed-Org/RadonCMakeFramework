@@ -22,8 +22,10 @@ macro(GenerateExecutable projectid)
 endmacro()
 
 macro(SharedGenerate what projectid projectname foldergroup)
-	set(${projectid}_LOCATION "${${CMAKE_PROJECT_NAME}_PATH}")
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/CompilerAndLinkerSettings.cmake")	
+    if (NOT DEFINED ${projectid}_LOCATION)
+        set(${projectid}_LOCATION "${${CMAKE_PROJECT_NAME}_PATH}")
+    endif()
+	include("${RCF_PATH}/intern/CompilerAndLinkerSettings.cmake")	
 	
 	# Activate solution directory feature
 	set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -111,7 +113,7 @@ macro(Finalize projectid)
 		endif()
 	endforeach()
 	
-	include("${${CMAKE_PROJECT_NAME}_PATH}/intern/CompilerAndLinkerSettings.cmake")
+	include("${RCF_PATH}/intern/CompilerAndLinkerSettings.cmake")
 	FinalizeCompilerAndLinkerSettings(${projectid} )	
     set_property(GLOBAL PROPERTY "${projectid}_FINALIZED" ON)
 	message(STATUS "Finalized project: ${${projectid}_NAME} Depends on: ${${projectid}_DEPS}")

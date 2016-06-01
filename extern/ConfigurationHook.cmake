@@ -10,18 +10,18 @@
 # Obtain Radon CMake framework root path to call the other scripts from there.
 # At this point the projectid is not set yet but the name of the cmake project
 # is available and all macros called in it's scope. 
-set(${CMAKE_PROJECT_NAME}_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+set(RCF_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 message(STATUS "Check for newest version of Radon CMake framework.")
 execute_process(COMMAND "${GIT_EXECUTABLE}" "pull" "-q"
                 WORKING_DIRECTORY "${${CMAKE_PROJECT_NAME}_PATH}")
 # The following includes are the only exception where an other variable than
 # ${${projectid}_LOCATION} is used to access files of the framework.
-include("${${CMAKE_PROJECT_NAME}_PATH}/util/CMakeFunctionShortcut.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/util/Macros.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/FileVersionSystem.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/Download.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/extern/Integrate.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/SystemInfo.cmake")
+include("${RCF_PATH}/util/CMakeFunctionShortcut.cmake")
+include("${RCF_PATH}/util/Macros.cmake")
+include("${RCF_PATH}/intern/FileVersionSystem.cmake")
+include("${RCF_PATH}/intern/Download.cmake")
+include("${RCF_PATH}/extern/Integrate.cmake")
+include("${RCF_PATH}/intern/SystemInfo.cmake")
 
 rcf_getsysteminfos()
 
@@ -132,9 +132,9 @@ macro(Integrate projectid projectname environmentname)
 		endif()
 	endif()
 
-	string(REGEX MATCH "${${projectid}_NAME}" match "${${CMAKE_PROJECT_NAME}_INTEGRATED}")
+	string(REGEX MATCH "${${projectid}_NAME}" match "${RCF_INTEGRATED}")
 	if ("${match}" STREQUAL "")
-		set(${CMAKE_PROJECT_NAME}_INTEGRATED "${${projectid}_NAME} ${${CMAKE_PROJECT_NAME}_INTEGRATED}" CACHE INTERNAL "Integrated projects")	
+		set(RCF_INTEGRATED "${${projectid}_NAME} ${RCF_INTEGRATED}" CACHE INTERNAL "Integrated projects")	
 	endif()	
 	include_directories(${${projectid}_PUBLIC_INCLUDES})
 endmacro()

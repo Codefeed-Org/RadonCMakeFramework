@@ -3,9 +3,9 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualStudio.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/GCC.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/XCode.cmake")
+include("${RCF_PATH}/intern/VisualStudio.cmake")
+include("${RCF_PATH}/intern/GCC.cmake")
+include("${RCF_PATH}/intern/XCode.cmake")
 
 macro(ConfigureCompilerAndLinker projectid buildtype)
 	#

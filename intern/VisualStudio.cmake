@@ -3,7 +3,7 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualGDB.cmake")
+include("${RCF_PATH}/intern/VisualGDB.cmake")
 include(CheckIncludeFiles)
 
 macro(ConfigureCompilerAndLinkerVS projectid buildtype)
