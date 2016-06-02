@@ -11,9 +11,14 @@
 # At this point the projectid is not set yet but the name of the cmake project
 # is available and all macros called in it's scope. 
 set(RCF_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
-message(STATUS "Check for newest version of Radon CMake framework.")
-execute_process(COMMAND "${GIT_EXECUTABLE}" "pull" "-q"
-                WORKING_DIRECTORY "${${CMAKE_PROJECT_NAME}_PATH}")
+
+get_property(checkRepo GLOBAL PROPERTY RCF_REPO_CHECK)
+if(NOT DEFINED checkRepo)
+    message(STATUS "Check for newest version of Radon CMake framework.")
+    execute_process(COMMAND "${GIT_EXECUTABLE}" "pull" "-q"
+                    WORKING_DIRECTORY "${RCF_PATH}")
+    set_property(GLOBAL PROPERTY RCF_REPO_CHECK true)
+endif()
 # The following includes are the only exception where an other variable than
 # ${${projectid}_LOCATION} is used to access files of the framework.
 include("${RCF_PATH}/util/CMakeFunctionShortcut.cmake")

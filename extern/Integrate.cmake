@@ -3,9 +3,11 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
-if (NOT DEFINED RCF_INCLUDED)
+if (RCF_INCLUDED)
+    return()
+endif()
 
-set(RCF_INCLUDED "")
+set(RCF_INCLUDED true)
 set(RCF_INTEGRATED "" CACHE INTERNAL "Integrated projects")
 
 find_package(Git REQUIRED)
@@ -17,5 +19,3 @@ if(NOT EXISTS ${outdir})
 endif()
 include("${outdir}/extern/ConfigurationHook.cmake")
 include("${outdir}/extern/Generate.cmake")
-
-endif()
