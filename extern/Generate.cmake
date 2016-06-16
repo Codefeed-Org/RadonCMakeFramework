@@ -131,7 +131,7 @@ macro(GenerateCustomTargetMetaInfo what projectname projectid foldergroup)
 		set(${projectid}_ISEXECUTABLE ON CACHE INTERNAL "Project is an executable.")
 	endif()
 	
-	ConfigureCompilerAndLinker(${projectid})
+	ConfigureCompilerAndLinker(${projectid} ${what})
 endmacro()
 
 macro(FinalizeCustomTargetMetaInfo projectid)

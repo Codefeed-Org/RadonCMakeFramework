@@ -83,6 +83,13 @@ macro(FailSafe projectid projectname)
 endmacro()
 
 macro(rcf_obtain_project projectid outdir)
+    set (extra_macro_args ${ARGN})
+    list(LENGTH extra_macro_args num_extra_args)
+    if (${num_extra_args} GREATER 0)
+        # specific revision of file version system
+        list(GET extra_macro_args 0 GetSpecificVersion)
+    endif()
+    
 	foreach(entry ${${projectid}_Locations})
 		separate_arguments(entry)
 		list(GET entry 0 protocol)
@@ -102,7 +109,12 @@ macro(rcf_obtain_project projectid outdir)
 		elseif(${protocol} STREQUAL "download")
 			rcf_download(${location} ${projectid} outdir)
 		else()#file version system
-			rcf_getrepo(${location} ${protocol} ${projectid} outdir)
+            if(DEFINED GetSpecificVersion)
+                rfc_getreporevision(${location} ${protocol} ${projectid} ${GetSpecificVersion} outdir)                
+                unset(GetSpecificVersion)
+            else()
+                rcf_getrepo(${location} ${protocol} ${projectid} outdir)            
+            endif()
 		endif()
 		
 		if(EXISTS ${outdir})

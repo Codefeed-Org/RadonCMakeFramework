@@ -13,10 +13,13 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	#
 	# To extensive use can slow down the program execution and bloat up the memory usage.
 	option(${projectid}_COMPILER_USE_RTTI "Activate runtime type information(Default: off)" OFF)
+    mark_as_advanced(${projectid}_COMPILER_USE_RTTI)
 	# One of the easiest ways to produce memory leaks if used not correctly. Even then there are still rare cases when a memleak can be produced.
 	option(${projectid}_COMPILER_USE_EXCEPTION "Activate exceptions(Default: off)" OFF)
+    mark_as_advanced(${projectid}_COMPILER_USE_EXCEPTION)
 	# Most compiler support a couple of intrinsic functions which will replace standard C routines(e.g. memcpy).
 	option(${projectid}_COMPILER_USE_INTRINSIC "Activate intrinsic functions(Default: on)" ON)
+    mark_as_advanced(${projectid}_COMPILER_USE_INTRINSIC)
     if(${${projectid}_COMPILER_USE_INTRINSIC})
         option(${projectid}_COMPILER_USE_INTRINSIC_MMX "Activate MMX intrinsic functions(Default: on)" ON)
         option(${projectid}_COMPILER_USE_INTRINSIC_SSE "Activate SSE intrinsic functions(Default: on)" ON)
@@ -51,9 +54,11 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
     endif()
 	# Many bugs exists because this switch is turned off.
 	option(${projectid}_COMPILER_TREAT_WARNINGS_AS_ERROR "Treat warnings as error(Default: on)" ON)
+    mark_as_advanced(${projectid}_COMPILER_TREAT_WARNINGS_AS_ERROR)
 	# A project which use dynamic linking need the libcrt.so/msvcrt.dll shared library on the target system to run.
 	# Static linking increase the size of the binary but don't need further shared libraries.
 	option(${projectid}_COMPILER_STATIC_LINKED_CRT "Told the compiler to compile the C runtime library functions or link them." OFF)
+    mark_as_advanced(${projectid}_COMPILER_STATIC_LINKED_CRT)
 	#option(${projectid}_COMPILER_WARNING)
 	
 	#
@@ -62,10 +67,13 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	if(${buildtype} STREQUAL "EXECUTABLE")
 		# This option mostly used for the demo scene and embedded systems as like consoles.
 		option(${projectid}_LINKER_USE_DEFAULTLIB "Use C runtime library and other system specific default libraries(Default: on)" ON)
+        mark_as_advanced(${projectid}_LINKER_USE_DEFAULTLIB)
 		# Mostly used in combination with DEFAULTLIB=OFF to build ultra small binaries.
 		option(${projectid}_LINKER_USE_DEFAULTENTRYPOINT "Use the target system default entry point(Default: on)" ON)
+        mark_as_advanced(${projectid}_LINKER_USE_DEFAULTENTRYPOINT)
 		if(NOT ${${projectid}_LINKER_USE_DEFAULTENTRYPOINT})
 			set(${projectid}_LINKER_ENTRYPOINT "entrypoint" CACHE STRING "Custom entry point(Default: entry")
+            mark_as_advanced(${projectid}_LINKER_ENTRYPOINT)
 		endif()
 		option(${projectid}_LINKER_USE_WINDOW "The executable will contain at least one window(Default: off)." OFF)
 	endif()
@@ -150,6 +158,7 @@ macro(FinalizeCompilerAndLinkerSettings projectid)
 	ProcessDefinesGCC(${projectid})
 	ProcessDefinesXCode(${projectid})
 
+    message(STATUS "flags: ${${projectid}_COMPILER_FLAGS}")
     set_target_properties(${${projectid}_NAME} PROPERTIES COMPILE_FLAGS ${${projectid}_COMPILER_FLAGS})
     target_compile_options(${${projectid}_NAME} PRIVATE $<$<CONFIG:DEBUG>:${${projectid}_COMPILER_FLAGS_DEBUG}> $<$<CONFIG:RELEASE>:${${projectid}_COMPILER_FLAGS_RELEASE}> $<$<CONFIG:RELWITHDEBINFO>:${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO}> $<$<CONFIG:MINSIZEREL>:${${projectid}_COMPILER_FLAGS_RELMINSIZE}>)
 

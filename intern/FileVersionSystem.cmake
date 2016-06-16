@@ -15,6 +15,7 @@ if (GIT_FOUND)
 	set("RCF_REPOTYPEMAP_git" "${GIT_EXECUTABLE}")
 	set("RCF_REPOTYPEMAP_git_get" "clone")
     set("RCF_REPOTYPEMAP_git_update" "pull" "-q")
+    set("RCF_REPOTYPEMAP_git_revision" "reset" "--hard")
 endif()
 
 find_package(Subversion QUIET)
@@ -22,6 +23,7 @@ if (SUBVERSION_FOUND)
 	set("RCF_REPOTYPEMAP_svn" "${Subversion_SVN_EXECUTABLE}")
 	set("RCF_REPOTYPEMAP_svn_get" "co")
     set("RCF_REPOTYPEMAP_svn_update" "update")
+    set("RCF_REPOTYPEMAP_svn_revision" "up" "-r")
 endif()	
 
 #
@@ -59,7 +61,6 @@ endmacro()
 #
 # A wrapper to get the repository.
 #
-
 macro(rcf_getrepo repo type targetdir outdir)
 	message(STATUS "${targetdir} need ${repo}")
 	if (DEFINED RCF_REPOTYPEMAP_${type})
@@ -73,6 +74,29 @@ macro(rcf_getrepo repo type targetdir outdir)
                 message(STATUS "Check ${localdir} for updates.")
                 execute_process(COMMAND "${RCF_REPOTYPEMAP_${type}}" ${RCF_REPOTYPEMAP_${type}_update}
                                 WORKING_DIRECTORY "${localdir}")                
+			endif()
+			list(APPEND RCF_REPO_CACHE_KEYS ${repo})
+			set(${repo}_PATH ${localdir} CACHE INTERNAL "Path to the loaded repository.")	
+			set(outdir ${localdir})
+		else()
+			set(outdir ${${repo}_PATH})	
+			message(STATUS "Found ${repo} at ${${repo}_PATH}.")
+		endif()
+	endif()
+endmacro()
+
+macro(rfc_getreporevision repo type targetdir revision outdir)
+	message(STATUS "${targetdir} need ${repo}")
+	if (DEFINED RCF_REPOTYPEMAP_${type})
+		if(NOT ";${repo};" MATCHES ";${RCF_REPO_CACHE_KEYS};")
+			rcf_generaterepopath("${targetdir}_${revision}" localdir)
+			if(NOT EXISTS ${localdir})
+				message(STATUS "Download ${repo} !")
+				execute_process(COMMAND "${RCF_REPOTYPEMAP_${type}}" ${RCF_REPOTYPEMAP_${type}_get} "${repo}" "${localdir}")
+                execute_process(COMMAND "${RCF_REPOTYPEMAP_${type}}" ${RCF_REPOTYPEMAP_${type}_revision} "${revision}"
+                                WORKING_DIRECTORY "${localdir}")
+			else()
+				message(STATUS "Found ${repo} at ${localdir}")
 			endif()
 			list(APPEND RCF_REPO_CACHE_KEYS ${repo})
 			set(${repo}_PATH ${localdir} CACHE INTERNAL "Path to the loaded repository.")	
