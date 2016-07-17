@@ -83,6 +83,7 @@ macro(FailSafe projectid projectname)
 endmacro()
 
 macro(rcf_obtain_project projectid outdir)
+    set(outdir "")
     set (extra_macro_args ${ARGN})
     list(LENGTH extra_macro_args num_extra_args)
     if (${num_extra_args} GREATER 0)
@@ -121,6 +122,10 @@ macro(rcf_obtain_project projectid outdir)
 			break()
 		endif()
 	endforeach()
+    
+    if(${outdir} STREQUAL "")
+        MESSAGE(FATAL_ERROR "Could not find an entry for ${projectid}! Use rcf_addlocation(${projectid} ...).")
+    endif()
 endmacro()
 
 # projectid = will be used as pre-name for all variables
