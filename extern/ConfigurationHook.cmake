@@ -10,18 +10,23 @@
 # Obtain Radon CMake framework root path to call the other scripts from there.
 # At this point the projectid is not set yet but the name of the cmake project
 # is available and all macros called in it's scope. 
-set(${CMAKE_PROJECT_NAME}_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
-message(STATUS "Check for newest version of Radon CMake framework.")
-execute_process(COMMAND "${GIT_EXECUTABLE}" "pull" "-q"
-                WORKING_DIRECTORY "${${CMAKE_PROJECT_NAME}_PATH}")
+set(RCF_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
+
+get_property(checkRepo GLOBAL PROPERTY RCF_REPO_CHECK)
+if(NOT DEFINED checkRepo)
+    message(STATUS "Check for newest version of Radon CMake framework.")
+    execute_process(COMMAND "${GIT_EXECUTABLE}" "pull" "-q"
+                    WORKING_DIRECTORY "${RCF_PATH}")
+    set_property(GLOBAL PROPERTY RCF_REPO_CHECK true)
+endif()
 # The following includes are the only exception where an other variable than
 # ${${projectid}_LOCATION} is used to access files of the framework.
-include("${${CMAKE_PROJECT_NAME}_PATH}/util/CMakeFunctionShortcut.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/util/Macros.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/FileVersionSystem.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/Download.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/extern/Integrate.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/SystemInfo.cmake")
+include("${RCF_PATH}/util/CMakeFunctionShortcut.cmake")
+include("${RCF_PATH}/util/Macros.cmake")
+include("${RCF_PATH}/intern/FileVersionSystem.cmake")
+include("${RCF_PATH}/intern/Download.cmake")
+include("${RCF_PATH}/extern/Integrate.cmake")
+include("${RCF_PATH}/intern/SystemInfo.cmake")
 
 rcf_getsysteminfos()
 
@@ -78,6 +83,14 @@ macro(FailSafe projectid projectname)
 endmacro()
 
 macro(rcf_obtain_project projectid outdir)
+    set(outdir "")
+    set (extra_macro_args ${ARGN})
+    list(LENGTH extra_macro_args num_extra_args)
+    if (${num_extra_args} GREATER 0)
+        # specific revision of file version system
+        list(GET extra_macro_args 0 GetSpecificVersion)
+    endif()
+    
 	foreach(entry ${${projectid}_Locations})
 		separate_arguments(entry)
 		list(GET entry 0 protocol)
@@ -97,13 +110,22 @@ macro(rcf_obtain_project projectid outdir)
 		elseif(${protocol} STREQUAL "download")
 			rcf_download(${location} ${projectid} outdir)
 		else()#file version system
-			rcf_getrepo(${location} ${protocol} ${projectid} outdir)
+            if(DEFINED GetSpecificVersion)
+                rfc_getreporevision(${location} ${protocol} ${projectid} ${GetSpecificVersion} outdir)                
+                unset(GetSpecificVersion)
+            else()
+                rcf_getrepo(${location} ${protocol} ${projectid} outdir)            
+            endif()
 		endif()
 		
 		if(EXISTS ${outdir})
 			break()
 		endif()
 	endforeach()
+    
+    if(${outdir} STREQUAL "")
+        MESSAGE(FATAL_ERROR "Could not find an entry for ${projectid}! Use rcf_addlocation(${projectid} ...).")
+    endif()
 endmacro()
 
 # projectid = will be used as pre-name for all variables
@@ -132,9 +154,9 @@ macro(Integrate projectid projectname environmentname)
 		endif()
 	endif()
 
-	string(REGEX MATCH "${${projectid}_NAME}" match "${${CMAKE_PROJECT_NAME}_INTEGRATED}")
+	string(REGEX MATCH "${${projectid}_NAME}" match "${RCF_INTEGRATED}")
 	if ("${match}" STREQUAL "")
-		set(${CMAKE_PROJECT_NAME}_INTEGRATED "${${projectid}_NAME} ${${CMAKE_PROJECT_NAME}_INTEGRATED}" CACHE INTERNAL "Integrated projects")	
+		set(RCF_INTEGRATED "${${projectid}_NAME} ${RCF_INTEGRATED}" CACHE INTERNAL "Integrated projects")	
 	endif()	
 	include_directories(${${projectid}_PUBLIC_INCLUDES})
 endmacro()

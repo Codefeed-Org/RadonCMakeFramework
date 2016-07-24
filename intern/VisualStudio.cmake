@@ -3,7 +3,7 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualGDB.cmake")
+include("${RCF_PATH}/intern/VisualGDB.cmake")
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 
@@ -32,8 +32,6 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 
 		if(${${projectid}_COMPILER_TREAT_WARNINGS_AS_ERROR})
 			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /WX")
-		else()
-			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /WX-")
 		endif()
 		
 		if(${buildtype} STREQUAL "EXECUTABLE")
@@ -72,7 +70,12 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 				set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /wd4275")
 			endif()
 		endif()
-		
+        
+        if(NOT ${${projectid}_COMPILER_USE_EXCEPTION})
+            # noexcept will rise a warning if exception handling is disabled
+            set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /wd4577")
+		endif()
+        
 		#
 		# Compiler specific settings
 		#
@@ -131,8 +134,8 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		
 		# OPT:REF = Remove unused references.
 		# OPT:ICF = Combine same code chunks into one and point to the shared code.
-		set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
-		set(${projectid}_COMPILER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /OPT:REF /OPT:ICF")
+		set(${projectid}_LINKER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
+		set(${projectid}_LINKER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /OPT:REF /OPT:ICF")
 		
 		#
 		# fix visual studio output directory
@@ -242,5 +245,7 @@ macro(CheckIntrinsicSupportVS projectid)
     endif()  
 
     set(${projectid}_COMPILER_USE_INTRINSIC_AVX512 OFF CACHE BOOL "Activate AVX512 intrinsic functions(Default: on)" FORCE)
-    set(${projectid}_COMPILER_USE_INTRINSIC_SHA OFF CACHE BOOL "Activate SHA intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_SHA1 OFF CACHE BOOL "Activate SHA128 intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_SHA2 OFF CACHE BOOL "Activate SHA256 intrinsic functions(Default: on)" FORCE)
+    set(${projectid}_COMPILER_USE_INTRINSIC_CRC32 OFF CACHE BOOL "Activate CRC32 intrinsic functions(Default: on)" FORCE)
 endmacro()

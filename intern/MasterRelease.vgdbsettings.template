@@ -19,7 +19,7 @@
         <UserName>@USERNAME@</UserName>
       </RemoteHost>
       <LocalDirectory>@LOCALDIRECTORY@</LocalDirectory>
-      <RemoteDirectory>/tmp/VisualGDB/$(ProjectDirUnixStyle)</RemoteDirectory>
+      <RemoteDirectory>@REMOTEDIRECTORY@</RemoteDirectory>
       <FileMasks>
         <string>*.hpp</string>
         <string>*.cpp</string>
@@ -28,29 +28,51 @@
         <string>*.cc</string>
         <string>*.cxx</string>
         <string>*.hxx</string>
-        <string>*.mak</string>
-        <string>Makefile</string>
         <string>CMakeLists.txt</string>
         <string>*.cmake</string>
-        <string>dense_hash_set</string>
-        <string>sparse_hash_map</string>
-        <string>sparse_hash_set</string>
-        <string>sparsetable</string>
-        <string>dense_hash_map</string>
+        <string>*.inl</string>
+        @FILEMASKS@
       </FileMasks>
       <TransferNewFilesOnly>true</TransferNewFilesOnly>
       <IncludeSubdirectories>true</IncludeSubdirectories>
-      <SelectedDirectories />
+      <SelectedDirectories>
+      @SELECTEDDIRECTORIES@
+      </SelectedDirectories>
     </MainSourceTransferCommand>
     <AllowChangingHostForMainCommands>false</AllowChangingHostForMainCommands>
     <SkipBuildIfNoSourceFilesChanged>false</SkipBuildIfNoSourceFilesChanged>
     <IgnoreFileTransferErrors>false</IgnoreFileTransferErrors>
     <RemoveRemoteDirectoryOnClean>false</RemoveRemoteDirectoryOnClean>
   </Project>
-  <Build xsi:type="com.visualgdb.build.cmake">
-    <RelativeSourceDirectory />
-    <ConfigurationType>RELWITHDEBINFO</ConfigurationType>
-    <BinaryDirectory>Release</BinaryDirectory>
+  <Build xsi:type="com.visualgdb.build.custom">
+    <BuildCommand>
+      <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>
+      <RemoteHost>
+        <HostName>@HOSTNAME@</HostName>
+        <Transport>SSH</Transport>
+        <UserName>@USERNAME@</UserName>
+      </RemoteHost>
+      <Command>cmake</Command>
+      <Arguments>-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RELWITHDEBINFO -DCMAKE_COLOR_MAKEFILE=OFF ../..</Arguments>
+      <WorkingDirectory>@REMOTEDIRECTORY@/build/remote</WorkingDirectory>
+      <Environment>
+        <Records />
+      </Environment>
+    </BuildCommand>
+    <CleanCommand>
+      <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>
+      <RemoteHost>
+        <HostName>@HOSTNAME@</HostName>
+        <Transport>SSH</Transport>
+        <UserName>@USERNAME@</UserName>
+      </RemoteHost>
+      <Command>rm</Command>
+      <Arguments>-rf build/remote</Arguments>
+      <WorkingDirectory>@REMOTEDIRECTORY@</WorkingDirectory>
+      <Environment>
+        <Records />
+      </Environment>
+    </CleanCommand>
     <Toolchain>
       <Name>Default GCC toolchain on @HOSTNAME@</Name>
       <UnixSystem>true</UnixSystem>
@@ -81,42 +103,9 @@
         </TestableLinuxPackage>
       </RequiredLinuxPackages>
     </Toolchain>
-    <MakeCommandTemplate>
-      <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>
-      <RemoteHost>
-        <HostName>@HOSTNAME@</HostName>
-        <Transport>SSH</Transport>
-        <UserName>@USERNAME@</UserName>
-      </RemoteHost>
-      <Command>make</Command>
-      <WorkingDirectory>$(BuildDir)</WorkingDirectory>
-      <Environment>
-        <Records>
-          <Record>
-            <VariableName>LANG</VariableName>
-            <Value>en_US.UTF-8</Value>
-          </Record>
-        </Records>
-      </Environment>
-    </MakeCommandTemplate>
-    <CMakeCommand>
-      <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>
-      <RemoteHost>
-        <HostName>@HOSTNAME@</HostName>
-        <Transport>SSH</Transport>
-        <UserName>@USERNAME@</UserName>
-      </RemoteHost>
-      <Command>cmake</Command>
-      <Environment>
-        <Records>
-          <Record>
-            <VariableName>LANG</VariableName>
-            <Value>en_US.UTF-8</Value>
-          </Record>
-        </Records>
-      </Environment>
-    </CMakeCommand>
-    <UpdateSourcesInCMakeFile>true</UpdateSourcesInCMakeFile>
+    <MainBuildDirectory>$(SourceDir)</MainBuildDirectory>
+    <AbsoluteTargetPath>$(TargetDir)/@BINARY@</AbsoluteTargetPath>
+    <AutoUpdateMakefiles>true</AutoUpdateMakefiles>
   </Build>
   <Debug xsi:type="com.visualgdb.debug.remote">
     <AdditionalStartupCommands />
@@ -153,7 +142,7 @@
     <LaunchGDBSettings xsi:type="GDBLaunchParametersNewInstance">
       <DebuggedProgram>$(TargetPath)</DebuggedProgram>
       <GDBServerPort>2000</GDBServerPort>
-      <ProgramArguments>@ARGUMENTS@</ProgramArguments>
+      <ProgramArguments />
     </LaunchGDBSettings>
     <GenerateCtrlBreakInsteadOfCtrlC>false</GenerateCtrlBreakInsteadOfCtrlC>
     <DeploymentTargetPath />
@@ -165,7 +154,22 @@
     <DeployWhenLaunchedWithoutDebugging>true</DeployWhenLaunchedWithoutDebugging>
   </Debug>
   <CustomBuild>
-    <PreBuildActions />
+    <PreBuildActions>
+      <CustomActionBase xsi:type="CommandLineAction">
+        <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>
+        <RemoteHost>
+          <HostName>@HOSTNAME@</HostName>
+          <Transport>SSH</Transport>
+          <UserName>@USERNAME@</UserName>
+        </RemoteHost>
+        <Command>mkdir</Command>
+        <Arguments>-p build/remote</Arguments>
+        <WorkingDirectory>@REMOTEDIRECTORY@</WorkingDirectory>
+        <Environment>
+          <Records />
+        </Environment>
+      </CustomActionBase>
+    </PreBuildActions>
     <PostBuildActions />
     <PreCleanActions />
     <PostCleanActions />

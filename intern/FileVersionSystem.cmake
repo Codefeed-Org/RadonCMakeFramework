@@ -4,7 +4,7 @@
 # -locate binaries
 # -get revision or identifier of current version
 
-set(${CMAKE_PROJECT_NAME}_REPO_CACHE_KEYS "" CACHE INTERNAL "Already loaded repositories.")
+set(RCF_REPO_CACHE_KEYS "" CACHE INTERNAL "Already loaded repositories.")
 
 #
 # Find the location of supported binaries.
@@ -12,16 +12,18 @@ set(${CMAKE_PROJECT_NAME}_REPO_CACHE_KEYS "" CACHE INTERNAL "Already loaded repo
 
 find_package(Git QUIET)
 if (GIT_FOUND)
-	set("${CMAKE_PROJECT_NAME}_REPOTYPEMAP_git" "${GIT_EXECUTABLE}")
-	set("${CMAKE_PROJECT_NAME}_REPOTYPEMAP_git_get" "clone")
-    set("${CMAKE_PROJECT_NAME}_REPOTYPEMAP_git_update" "pull" "-q")
+	set("RCF_REPOTYPEMAP_git" "${GIT_EXECUTABLE}")
+	set("RCF_REPOTYPEMAP_git_get" "clone")
+    set("RCF_REPOTYPEMAP_git_update" "pull" "-q")
+    set("RCF_REPOTYPEMAP_git_revision" "reset" "--hard")
 endif()
 
 find_package(Subversion QUIET)
 if (SUBVERSION_FOUND)
-	set("${CMAKE_PROJECT_NAME}_REPOTYPEMAP_svn" "${Subversion_SVN_EXECUTABLE}")
-	set("${CMAKE_PROJECT_NAME}_REPOTYPEMAP_svn_get" "co")
-    set("${CMAKE_PROJECT_NAME}_REPOTYPEMAP_svn_update" "update")
+	set("RCF_REPOTYPEMAP_svn" "${Subversion_SVN_EXECUTABLE}")
+	set("RCF_REPOTYPEMAP_svn_get" "co")
+    set("RCF_REPOTYPEMAP_svn_update" "update")
+    set("RCF_REPOTYPEMAP_svn_revision" "up" "-r")
 endif()	
 
 #
@@ -59,27 +61,49 @@ endmacro()
 #
 # A wrapper to get the repository.
 #
-
 macro(rcf_getrepo repo type targetdir outdir)
 	message(STATUS "${targetdir} need ${repo}")
-	if (DEFINED ${CMAKE_PROJECT_NAME}_REPOTYPEMAP_${type})
-		if(NOT ";${repo};" MATCHES ";${${CMAKE_PROJECT_NAME}_REPO_CACHE_KEYS};")
+	if (DEFINED RCF_REPOTYPEMAP_${type})
+		if(NOT ";${repo};" MATCHES ";${RCF_REPO_CACHE_KEYS};")
 			rcf_generaterepopath(${targetdir} localdir)
 			if(NOT EXISTS ${localdir})
 				message(STATUS "Download ${repo} !")
-				execute_process(COMMAND "${${CMAKE_PROJECT_NAME}_REPOTYPEMAP_${type}}" ${${CMAKE_PROJECT_NAME}_REPOTYPEMAP_${type}_get} "${repo}" "${localdir}")
+				execute_process(COMMAND "${RCF_REPOTYPEMAP_${type}}" ${RCF_REPOTYPEMAP_${type}_get} "${repo}" "${localdir}")
 			else()
 				message(STATUS "Found ${repo} at ${localdir}")
                 message(STATUS "Check ${localdir} for updates.")
-                execute_process(COMMAND "${${CMAKE_PROJECT_NAME}_REPOTYPEMAP_${type}}" ${${CMAKE_PROJECT_NAME}_REPOTYPEMAP_${type}_update}
+                execute_process(COMMAND "${RCF_REPOTYPEMAP_${type}}" ${RCF_REPOTYPEMAP_${type}_update}
                                 WORKING_DIRECTORY "${localdir}")                
 			endif()
-			list(APPEND ${CMAKE_PROJECT_NAME}_REPO_CACHE_KEYS ${repo})
-			set(${${CMAKE_PROJECT_NAME}_REPO_CACHE_KEYS}_PATH ${localdir} CACHE INTERNAL "Path to the loaded repository.")	
+			list(APPEND RCF_REPO_CACHE_KEYS ${repo})
+			set(${repo}_PATH ${localdir} CACHE INTERNAL "Path to the loaded repository.")	
 			set(outdir ${localdir})
 		else()
-			set(outdir ${${${CMAKE_PROJECT_NAME}_REPO_CACHE_KEYS}_PATH})	
-			message(STATUS "Found ${repo} at ${${${CMAKE_PROJECT_NAME}_REPO_CACHE_KEYS}_PATH}.")
+			set(outdir ${${repo}_PATH})	
+			message(STATUS "Found ${repo} at ${${repo}_PATH}.")
+		endif()
+	endif()
+endmacro()
+
+macro(rfc_getreporevision repo type targetdir revision outdir)
+	message(STATUS "${targetdir} need ${repo}")
+	if (DEFINED RCF_REPOTYPEMAP_${type})
+		if(NOT ";${repo};" MATCHES ";${RCF_REPO_CACHE_KEYS};")
+			rcf_generaterepopath("${targetdir}_${revision}" localdir)
+			if(NOT EXISTS ${localdir})
+				message(STATUS "Download ${repo} !")
+				execute_process(COMMAND "${RCF_REPOTYPEMAP_${type}}" ${RCF_REPOTYPEMAP_${type}_get} "${repo}" "${localdir}")
+                execute_process(COMMAND "${RCF_REPOTYPEMAP_${type}}" ${RCF_REPOTYPEMAP_${type}_revision} "${revision}"
+                                WORKING_DIRECTORY "${localdir}")
+			else()
+				message(STATUS "Found ${repo} at ${localdir}")
+			endif()
+			list(APPEND RCF_REPO_CACHE_KEYS ${repo})
+			set(${repo}_PATH ${localdir} CACHE INTERNAL "Path to the loaded repository.")	
+			set(outdir ${localdir})
+		else()
+			set(outdir ${${repo}_PATH})	
+			message(STATUS "Found ${repo} at ${${repo}_PATH}.")
 		endif()
 	endif()
 endmacro()

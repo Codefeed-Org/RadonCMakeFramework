@@ -3,9 +3,9 @@
 # http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
 # http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
 #
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualStudio.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/GCC.cmake")
-include("${${CMAKE_PROJECT_NAME}_PATH}/intern/XCode.cmake")
+include("${RCF_PATH}/intern/VisualStudio.cmake")
+include("${RCF_PATH}/intern/GCC.cmake")
+include("${RCF_PATH}/intern/XCode.cmake")
 
 macro(ConfigureCompilerAndLinker projectid buildtype)
 	#
@@ -13,10 +13,13 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	#
 	# To extensive use can slow down the program execution and bloat up the memory usage.
 	option(${projectid}_COMPILER_USE_RTTI "Activate runtime type information(Default: off)" OFF)
+    mark_as_advanced(${projectid}_COMPILER_USE_RTTI)
 	# One of the easiest ways to produce memory leaks if used not correctly. Even then there are still rare cases when a memleak can be produced.
 	option(${projectid}_COMPILER_USE_EXCEPTION "Activate exceptions(Default: off)" OFF)
+    mark_as_advanced(${projectid}_COMPILER_USE_EXCEPTION)
 	# Most compiler support a couple of intrinsic functions which will replace standard C routines(e.g. memcpy).
 	option(${projectid}_COMPILER_USE_INTRINSIC "Activate intrinsic functions(Default: on)" ON)
+    mark_as_advanced(${projectid}_COMPILER_USE_INTRINSIC)
     if(${${projectid}_COMPILER_USE_INTRINSIC})
         option(${projectid}_COMPILER_USE_INTRINSIC_MMX "Activate MMX intrinsic functions(Default: on)" ON)
         option(${projectid}_COMPILER_USE_INTRINSIC_SSE "Activate SSE intrinsic functions(Default: on)" ON)
@@ -34,14 +37,28 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
         option(${projectid}_COMPILER_USE_INTRINSIC_NEON "Activate NEON intrinsic functions(Default: on)" ON)
         option(${projectid}_COMPILER_USE_INTRINSIC_AES "Activate AES intrinsic functions(Default: on)" ON)
         option(${projectid}_COMPILER_USE_INTRINSIC_XOP "Activate XOP intrinsic functions(Default: on)" ON)
-        option(${projectid}_COMPILER_USE_INTRINSIC_SHA "Activate SHA intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SHA1 "Activate SHA128 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_SHA2 "Activate SHA256 intrinsic functions(Default: on)" ON)
+        option(${projectid}_COMPILER_USE_INTRINSIC_CRC32 "Activate CRC32 intrinsic functions(Default: on)" ON)
         option(${projectid}_COMPILER_USE_INTRINSIC_CPUID "Activate CPUID intrinsic functions(Default: on)" ON)
+        mark_as_advanced(FORCE ${projectid}_COMPILER_USE_INTRINSIC_MMX ${projectid}_COMPILER_USE_INTRINSIC_SSE
+            ${projectid}_COMPILER_USE_INTRINSIC_SSE2 ${projectid}_COMPILER_USE_INTRINSIC_SSE3
+            ${projectid}_COMPILER_USE_INTRINSIC_SSSE3 ${projectid}_COMPILER_USE_INTRINSIC_SSE41
+            ${projectid}_COMPILER_USE_INTRINSIC_SSE42 ${projectid}_COMPILER_USE_INTRINSIC_SSE4A
+            ${projectid}_COMPILER_USE_INTRINSIC_AVX ${projectid}_COMPILER_USE_INTRINSIC_AVX2
+            ${projectid}_COMPILER_USE_INTRINSIC_AVX512 ${projectid}_COMPILER_USE_INTRINSIC_FMA3
+            ${projectid}_COMPILER_USE_INTRINSIC_FMA4 ${projectid}_COMPILER_USE_INTRINSIC_NEON
+            ${projectid}_COMPILER_USE_INTRINSIC_AES ${projectid}_COMPILER_USE_INTRINSIC_XOP
+            ${projectid}_COMPILER_USE_INTRINSIC_SHA1 ${projectid}_COMPILER_USE_INTRINSIC_SHA2
+            ${projectid}_COMPILER_USE_INTRINSIC_CRC32 ${projectid}_COMPILER_USE_INTRINSIC_CPUID)
     endif()
 	# Many bugs exists because this switch is turned off.
 	option(${projectid}_COMPILER_TREAT_WARNINGS_AS_ERROR "Treat warnings as error(Default: on)" ON)
+    mark_as_advanced(${projectid}_COMPILER_TREAT_WARNINGS_AS_ERROR)
 	# A project which use dynamic linking need the libcrt.so/msvcrt.dll shared library on the target system to run.
 	# Static linking increase the size of the binary but don't need further shared libraries.
 	option(${projectid}_COMPILER_STATIC_LINKED_CRT "Told the compiler to compile the C runtime library functions or link them." OFF)
+    mark_as_advanced(${projectid}_COMPILER_STATIC_LINKED_CRT)
 	#option(${projectid}_COMPILER_WARNING)
 	
 	#
@@ -50,10 +67,13 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	if(${buildtype} STREQUAL "EXECUTABLE")
 		# This option mostly used for the demo scene and embedded systems as like consoles.
 		option(${projectid}_LINKER_USE_DEFAULTLIB "Use C runtime library and other system specific default libraries(Default: on)" ON)
+        mark_as_advanced(${projectid}_LINKER_USE_DEFAULTLIB)
 		# Mostly used in combination with DEFAULTLIB=OFF to build ultra small binaries.
 		option(${projectid}_LINKER_USE_DEFAULTENTRYPOINT "Use the target system default entry point(Default: on)" ON)
+        mark_as_advanced(${projectid}_LINKER_USE_DEFAULTENTRYPOINT)
 		if(NOT ${${projectid}_LINKER_USE_DEFAULTENTRYPOINT})
 			set(${projectid}_LINKER_ENTRYPOINT "entrypoint" CACHE STRING "Custom entry point(Default: entry")
+            mark_as_advanced(${projectid}_LINKER_ENTRYPOINT)
 		endif()
 		option(${projectid}_LINKER_USE_WINDOW "The executable will contain at least one window(Default: off)." OFF)
 	endif()
@@ -126,47 +146,39 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 endmacro()
 
 macro(FinalizeCompilerAndLinkerSettings projectid)
-	set(CMAKE_ASM_FLAGS ${${projectid}_ASM_COMPILER_FLAGS})
-	set(CMAKE_ASM_FLAGS_DEBUG ${${projectid}_ASM_COMPILER_FLAGS_DEBUG})
-	set(CMAKE_ASM_FLAGS_RELEASE ${${projectid}_ASM_COMPILER_FLAGS_RELEASE})
-	set(CMAKE_ASM_FLAGS_RELWITHDEBINFO ${${projectid}_ASM_COMPILER_FLAGS_RELWITHDEBINFO})
-	set(CMAKE_ASM_FLAGS_MINSIZEREL ${${projectid}_ASM_COMPILER_FLAGS_RELMINSIZE})
-
+    # Disable all flags and set them per target and config.
+    # This ensures that no default flags are added to the project like exceptions on VC++.
+	set(CMAKE_ASM_FLAGS "")
+    set(CMAKE_C_FLAGS "")
+    set(CMAKE_CXX_FLAGS "")
+    
 	# following macros will attach the defines to the compiler targets in the format
 	# they need them
 	ProcessDefinesVS(${projectid})
 	ProcessDefinesGCC(${projectid})
 	ProcessDefinesXCode(${projectid})
-	
-	set(CMAKE_C_FLAGS ${${projectid}_COMPILER_FLAGS})
-	set(CMAKE_C_FLAGS_DEBUG ${${projectid}_COMPILER_FLAGS_DEBUG})
-	set(CMAKE_C_FLAGS_RELEASE ${${projectid}_COMPILER_FLAGS_RELEASE})
-	set(CMAKE_C_FLAGS_RELWITHDEBINFO ${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO})
-	set(CMAKE_C_FLAGS_MINSIZEREL ${${projectid}_COMPILER_FLAGS_RELMINSIZE})
-	
-	set(CMAKE_CXX_FLAGS ${${projectid}_COMPILER_FLAGS})
-	set(CMAKE_CXX_FLAGS_DEBUG ${${projectid}_COMPILER_FLAGS_DEBUG})
-	set(CMAKE_CXX_FLAGS_RELEASE ${${projectid}_COMPILER_FLAGS_RELEASE})
-	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO ${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO})
-	set(CMAKE_CXX_FLAGS_MINSIZEREL ${${projectid}_COMPILER_FLAGS_RELMINSIZE})
 
-	set(CMAKE_EXE_LINKER_FLAGS ${${projectid}_LINKER_FLAGS})
-	set(CMAKE_EXE_LINKER_FLAGS_DEBUG ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_DEBUG})
-	set(CMAKE_EXE_LINKER_FLAGS_RELEASE ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_RELEASE})
-	set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_RELWITHDEBINFO})
-	set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_MINSIZEREL})
-	
-	set(CMAKE_MODULE_LINKER_FLAGS ${${projectid}_LINKER_FLAGS})
-	set(CMAKE_MODULE_LINKER_FLAGS_DEBUG ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_DEBUG})
-	set(CMAKE_MODULE_LINKER_FLAGS_RELEASE ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_RELEASE})
-	set(CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_RELWITHDEBINFO})
-	set(CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_MINSIZEREL})
+    message(STATUS "flags: ${${projectid}_COMPILER_FLAGS}")
+    set_target_properties(${${projectid}_NAME} PROPERTIES COMPILE_FLAGS ${${projectid}_COMPILER_FLAGS})
+    target_compile_options(${${projectid}_NAME} PRIVATE $<$<CONFIG:DEBUG>:${${projectid}_COMPILER_FLAGS_DEBUG}> $<$<CONFIG:RELEASE>:${${projectid}_COMPILER_FLAGS_RELEASE}> $<$<CONFIG:RELWITHDEBINFO>:${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO}> $<$<CONFIG:MINSIZEREL>:${${projectid}_COMPILER_FLAGS_RELMINSIZE}>)
 
-	set(CMAKE_SHARED_LINKER_FLAGS ${${projectid}_LINKER_FLAGS})
-	set(CMAKE_SHARED_LINKER_FLAGS_DEBUG ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_DEBUG})
-	set(CMAKE_SHARED_LINKER_FLAGS_RELEASE ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_RELEASE})
-	set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_RELWITHDEBINFO})
-	set(CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL ${${projectid}_LINKER_FLAGS} ${${projectid}_LINKER_FLAGS_MINSIZEREL})
+    if(${${projectid}_WHAT} STREQUAL "EXECUTABLE")    
+        if (NOT ${${projectid}_LINKER_FLAGS} STREQUAL "")
+            set_target_properties(${${projectid}_NAME} PROPERTIES LINK_FLAGS ${${projectid}_LINKER_FLAGS})
+        endif()
+        if (NOT ${${projectid}_LINKER_FLAGS_DEBUG} STREQUAL "")
+            set_target_properties(${${projectid}_NAME} PROPERTIES LINK_FLAGS_DEBUG ${${projectid}_LINKER_FLAGS_DEBUG})
+        endif()
+        if (NOT ${${projectid}_LINKER_FLAGS_RELEASE} STREQUAL "")
+            set_target_properties(${${projectid}_NAME} PROPERTIES LINK_FLAGS_RELEASE ${${projectid}_LINKER_FLAGS_RELEASE})
+        endif()
+        if (NOT ${${projectid}_LINKER_FLAGS_RELWITHDEBINFO} STREQUAL "")
+            set_target_properties(${${projectid}_NAME} PROPERTIES LINK_FLAGS_RELWITHDEBINFO ${${projectid}_LINKER_FLAGS_RELWITHDEBINFO})
+        endif()
+        if (NOT ${${projectid}_LINKER_FLAGS_RELMINSIZE} STREQUAL "")
+            set_target_properties(${${projectid}_NAME} PROPERTIES LINK_FLAGS_MINSIZEREL ${${projectid}_LINKER_FLAGS_RELMINSIZE})
+        endif()
+    endif()
     
     if(TARGET ${${projectid}_NAME})
       set_target_properties(${${projectid}_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
