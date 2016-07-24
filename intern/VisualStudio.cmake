@@ -5,6 +5,7 @@
 #
 include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualGDB.cmake")
 include(CheckIncludeFiles)
+include(CheckFunctionExists)
 
 macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 	if(MSVC)
