@@ -132,10 +132,10 @@ macro(GenerateCustomTargetMetaInfo what projectname projectid foldergroup)
 	endif()
 	
 	ConfigureCompilerAndLinker(${projectid} ${what})
+	set_property(TARGET ${${projectid}_NAME} PROPERTY FOLDER ${foldergroup})        
 endmacro()
 
 macro(FinalizeCustomTargetMetaInfo projectid)
 	FinalizeCompilerAndLinkerSettings(${projectid})
-	set_property(TARGET ${${projectid}_NAME} PROPERTY FOLDER ${foldergroup})    
     SharedFinalize(${projectid})
 endmacro()
