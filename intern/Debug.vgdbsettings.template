@@ -44,7 +44,7 @@
       </RemoteHost>
       <Command>cmake</Command>
       <Arguments>--build . --target @TARGETNAME@ --config Debug -- @BUILDPARAM@</Arguments>
-      <WorkingDirectory>@REMOTEDIRECTORY@/build/remote</WorkingDirectory>
+      <WorkingDirectory>@BUILDDIRECTORY@/build/remote</WorkingDirectory>
       <Environment>
         <Records />
       </Environment>
@@ -93,7 +93,7 @@
         </TestableLinuxPackage>
       </RequiredLinuxPackages>
     </Toolchain>
-    <MainBuildDirectory>@REMOTEDIRECTORY@</MainBuildDirectory>
+    <MainBuildDirectory>@BUILDDIRECTORY@</MainBuildDirectory>
     <AbsoluteTargetPath>$(SourceDir)/@BINARY@</AbsoluteTargetPath>
     <AutoUpdateMakefiles>true</AutoUpdateMakefiles>
   </Build>

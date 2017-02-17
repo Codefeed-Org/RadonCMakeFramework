@@ -25,6 +25,9 @@ macro(SharedGenerate what projectid projectname foldergroup)
     if (NOT DEFINED ${projectid}_LOCATION)
         set(${projectid}_LOCATION "${${CMAKE_PROJECT_NAME}_PATH}")
     endif()
+    if(NOT ${${projectid}_NAME}_SOURCE_DIR)
+        set(${${projectid}_NAME}_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+    endif()    
 	include("${RCF_PATH}/intern/CompilerAndLinkerSettings.cmake")	
 	
 	# Activate solution directory feature
@@ -59,7 +62,7 @@ macro(SharedGenerate what projectid projectname foldergroup)
         # Add a Visual GDB Execution target.
         option(${projectid}_VGDB_TARGET "Generate a Visual GDB compiler target." OFF)
         if(${${projectid}_VGDB_TARGET})
-            include("${${CMAKE_PROJECT_NAME}_PATH}/intern/VisualGDB.cmake")
+            include("${RCF_PATH}/intern/VisualGDB.cmake")
             GenerateVGDBTarget(${projectid})
         endif()    
     endif()
