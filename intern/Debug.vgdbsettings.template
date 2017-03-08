@@ -44,7 +44,7 @@
       </RemoteHost>
       <Command>cmake</Command>
       <Arguments>--build . --target @TARGETNAME@ --config Debug -- @BUILDPARAM@</Arguments>
-      <WorkingDirectory>@BUILDDIRECTORY@/build/remote</WorkingDirectory>
+      <WorkingDirectory>@BUILDDIRECTORY@</WorkingDirectory>
       <Environment>
         <Records />
       </Environment>

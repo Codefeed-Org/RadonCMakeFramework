@@ -53,8 +53,8 @@
         <UserName>@USERNAME@</UserName>
       </RemoteHost>
       <Command>cmake</Command>
-      <Arguments>-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_COLOR_MAKEFILE=OFF ../..</Arguments>
-      <WorkingDirectory>@REMOTEDIRECTORY@/build/remote</WorkingDirectory>
+      <Arguments>-G "Unix Makefiles" -DCMAKE_BUILD_TYPE=DEBUG -DCMAKE_COLOR_MAKEFILE=OFF @REMOTEDIRECTORY@</Arguments>
+      <WorkingDirectory>@BUILDDIRECTORY@</WorkingDirectory>
       <Environment>
         <Records />
       </Environment>
@@ -67,7 +67,7 @@
         <UserName>@USERNAME@</UserName>
       </RemoteHost>
       <Command>rm</Command>
-      <Arguments>-rf build/remote</Arguments>
+      <Arguments>-rf @BUILDDIRECTORY@</Arguments>
       <WorkingDirectory>@REMOTEDIRECTORY@</WorkingDirectory>
       <Environment>
         <Records />
@@ -163,7 +163,7 @@
           <UserName>@USERNAME@</UserName>
         </RemoteHost>
         <Command>mkdir</Command>
-        <Arguments>-p build/remote</Arguments>
+        <Arguments>-p @BUILDDIRECTORY@</Arguments>
         <WorkingDirectory>@REMOTEDIRECTORY@</WorkingDirectory>
         <Environment>
           <Records />
