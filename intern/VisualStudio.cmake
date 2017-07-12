@@ -132,11 +132,14 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		# struct byte alignment
 		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /Zp16")
 		
+		# use latest c++ standard
+		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /std:c++latest")
+
 		# OPT:REF = Remove unused references.
 		# OPT:ICF = Combine same code chunks into one and point to the shared code.
 		set(${projectid}_LINKER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
 		set(${projectid}_LINKER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /OPT:REF /OPT:ICF")
-		
+
 		#
 		# fix visual studio output directory
 		#
