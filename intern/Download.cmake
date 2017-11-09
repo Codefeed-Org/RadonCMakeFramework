@@ -4,7 +4,11 @@
 # -download files from web
 # -execution chain
 
-set(${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS "" CACHE INTERNAL "Already loaded files.")
+cmake_policy(SET CMP0057 NEW)
+
+if(NOT DEFINED ${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS)
+    set(${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS "" CACHE INTERNAL "Already loaded files.")
+endif()
 
 #
 #
@@ -17,7 +21,10 @@ endmacro()
 
 function(rcf_download url projectid outdir)
 	message(STATUS "${projectid} need ${url}")
-	if(NOT ";${url};" MATCHES ";${${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS};")
+	if("${url}" IN_LIST ${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS)
+        set(outdir ${${${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS}_PATH} PARENT_SCOPE)	
+		message(STATUS "Found ${url} at ${${${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS}_PATH}.")
+	else()
 		rcf_generatefilepath(${url} localdir)
 		if(NOT EXISTS ${localdir})
 			message(STATUS "Download ${url} !")
@@ -33,15 +40,12 @@ function(rcf_download url projectid outdir)
 		else()
 			message(STATUS "Found ${url} at ${localdir}")
 		endif()
-		
-		list(APPEND ${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS ${url})
+		list(APPEND DOWNLOAD_CACHE_KEYS ${${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS} ${url})
+        set(${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS "${DOWNLOAD_CACHE_KEYS}" CACHE INTERNAL "Already loaded files.")	
 		set(${${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS}_PATH ${localdir} CACHE INTERNAL "Path to the loaded file.")	
-		set(outdir ${localdir})
+		set(outdir ${localdir} PARENT_SCOPE)
 		if(COMMAND rcf_download_success)
-			rcf_download_success(${projectid} ${url} ${outdir})
+			rcf_download_success(${projectid} ${url} ${localdir})
 		endif()
-	else()
-		set(outdir ${${${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS}_PATH})	
-		message(STATUS "Found ${url} at ${${${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS}_PATH}.")
 	endif()
 endfunction()
