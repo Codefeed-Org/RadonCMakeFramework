@@ -27,6 +27,7 @@ include("${RCF_PATH}/intern/FileVersionSystem.cmake")
 include("${RCF_PATH}/intern/Download.cmake")
 include("${RCF_PATH}/extern/Integrate.cmake")
 include("${RCF_PATH}/intern/SystemInfo.cmake")
+include("${RCF_PATH}/intern/PackageManagement.cmake")
 
 rcf_getsysteminfos()
 
