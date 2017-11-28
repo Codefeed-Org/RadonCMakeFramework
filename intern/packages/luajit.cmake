@@ -19,10 +19,16 @@ function(build_package location)
   else()
     set(dasmflags -D WIN -D JIT -D FFI)
   endif()
-  add_custom_target(MiniLua_Code_Generation
+  add_custom_command(OUTPUT "host/buildvm_arch.h" "vm_x86.dasc"
     COMMAND MiniLua "../dynasm/dynasm.lua" -LN ${dasmflags} -o "host/buildvm_arch.h" "vm_x86.dasc"
     DEPENDS "../dynasm/dynasm.lua"
-    WORKING_DIRECTORY "${location}/src/"
+    WORKING_DIRECTORY "${location}/src/")
+  set_source_files_properties(
+    "${location}/src/host/buildvm_arch.h" "${location}/src/vm_x86.dasc" PROPERTIES
+    GENERATED TRUE
+  )    
+  add_custom_target(MiniLua_Code_Generation
+    DEPENDS "${location}/src/host/buildvm_arch.h" "${location}/src/vm_x86.dasc"
   )
   set_property(TARGET MiniLua_Code_Generation PROPERTY FOLDER "3rd Party Libraries/luaJIT/Tools")
   
@@ -35,7 +41,7 @@ function(build_package location)
   
   # This target will be used to generate with buildvm the needed code for the libraries.
   set(luajit_libfiles lib_base.c lib_math.c lib_bit.c lib_string.c lib_table.c lib_io.c lib_os.c lib_package.c lib_debug.c lib_jit.c lib_ffi.c)
-  add_custom_target(BuildVM_Code_Generation 
+  add_custom_command(OUTPUT lj_vm.obj lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h jit/vmdef.h lj_folddef.h
     COMMAND BuildVM -m peobj -o lj_vm.obj
     COMMAND BuildVM -m bcdef -o lj_bcdef.h ${luajit_libfiles}
     COMMAND BuildVM -m ffdef -o lj_ffdef.h ${luajit_libfiles}
@@ -44,6 +50,18 @@ function(build_package location)
     COMMAND BuildVM -m vmdef -o jit/vmdef.h ${luajit_libfiles}
     COMMAND BuildVM -m folddef -o lj_folddef.h lj_opt_fold.c
     DEPENDS ${luajit_libfiles} lj_opt_fold.c
+    WORKING_DIRECTORY "${location}/src/")  
+  set(output_dependencies     
+    "${location}/src/lj_vm.obj"
+    "${location}/src/lj_bcdef.h"
+    "${location}/src/lj_ffdef.h"
+    "${location}/src/lj_libdef.h"
+    "${location}/src/lj_recdef.h"
+    "${location}/src/jit/vmdef.h"
+    "${location}/src/lj_folddef.h")
+  set_source_files_properties(${output_dependencies} PROPERTIES GENERATED TRUE)      
+  add_custom_target(BuildVM_Code_Generation 
+    DEPENDS ${output_dependencies}
     WORKING_DIRECTORY "${location}/src/"
   )
   set_property(TARGET BuildVM_Code_Generation PROPERTY FOLDER "3rd Party Libraries/luaJIT/Tools")
