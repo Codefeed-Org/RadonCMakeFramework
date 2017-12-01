@@ -10,5 +10,5 @@ endif()
 
 function(build_package location)
   set(RADONFRAMEWORK_LOCATION ${location})
-  rcf_add_subdirectory_once(${location} ${PROJECT_BINARY_DIR}/RADONFRAMEWORK/)
+  rcf_add_subdirectory_once(${location} ${PROJECT_BINARY_DIR}/RADONFRAMEWORK${package_version}/)
 endfunction()
