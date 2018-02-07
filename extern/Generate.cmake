@@ -162,6 +162,7 @@ macro(rcf_generate what projectid projectname foldergroup)
     set(${projectid}_FILES ${ARGN})
   endif()
   string(TOUPPER ${what} what_uppercase)
+  set(${projectid}_FILES "${${projectid}_FILES} ")
   Generate(${what_uppercase} ${projectid} ${projectname} ${foldergroup})
 endmacro()
 

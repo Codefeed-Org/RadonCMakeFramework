@@ -88,6 +88,21 @@ function(AddSourceDirectoryRecursive var)
 	set("${var}" ${locale_files} PARENT_SCOPE)
 endfunction()
 
+function(rcf_get_current_projectid var)
+	set(projects ${RCF_GENERATE_SCOPE_STACK})	
+	list(LENGTH projects last)
+	math(EXPR last ${last}-1)
+	list(GET projects ${last} projectid)
+	set(${var} ${projectid} PARENT_SCOPE)
+endfunction()
+
+function(rcf_add_recursive rootdir suggested_ide_dirname)
+	AddSourceDirectoryRecursive(src_list ${rootdir} ${suggested_ide_dirname})
+	AddHeaderDirectoryRecursive(hdr_list ${rootdir} ${suggested_ide_dirname})
+	rcf_get_current_projectid(projectid)
+	target_sources(${${projectid}_NAME} PUBLIC "${${projectid}_FILES};${src_list};${hdr_list}")
+endfunction()
+
 function(AddAssemblerDirectoryRecursive var)	
 	# - Add a directory to the current project.
 	string(REGEX REPLACE "/" "\\\\" locale_SourceGroupPath ${ARGV2} )
