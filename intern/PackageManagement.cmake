@@ -1,10 +1,19 @@
 get_filename_component(packagemanager_dir "${RCF_PATH}/intern/packages/" ABSOLUTE)
 
+set(RCF_PACKAGES "" CACHE INTERNAL "")
+
 function(rcf_addpackage packagename)
   set(package_version "newest")
   if(${ARGC} EQUAL 2)
     set(package_version ${ARGV1})
   endif()
+
+  cmake_policy(PUSH)
+  cmake_policy(SET CMP0057 NEW)
+  if("${packagename}" IN_LIST RCF_PACKAGES)
+    set(packagemanager_dir "${${packagename}_PACKAGE_DIR}")
+  endif()
+  cmake_policy(POP)
 
   set(package_file "")
   if(EXISTS "${packagemanager_dir}/${packagename}.cmake")
@@ -27,5 +36,17 @@ function(rcf_addpackage packagename)
     endif()
 
     build_package(${outdir})
+  endif()
+endfunction()
+
+function(rcf_register_package name)
+  set(RCF_PACKAGES "${RCF_PACKAGES};${name}" CACHE INTERNAL "")
+  set(${name}_PACKAGE_DIR "${CMAKE_CURRENT_LIST_DIR}/packages" CACHE INTERNAL "")
+endfunction()
+
+function(rcf_register_package_repository name protocol source)
+  rcf_obtain(${name} ${protocol} ${source} dir)
+  if (EXISTS ${dir}/packagelist.cmake)
+    include("${dir}/packagelist.cmake")
   endif()
 endfunction()
