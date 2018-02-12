@@ -156,16 +156,32 @@ endmacro()
 
 set(RCF_GENERATE_SCOPE_STACK "" CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
 
+#[[.rst rcf_generate
+@brief Start a build target.
+@param what What kind of target(executable, module, shared, headeronly)?
+@param projectid Project identifier.
+@param projectname The name used in IDE, logs and so on.
+@param folderroup Visual Studio and other IDE support to place a target in a 
+logical spot instead of the one in the file system.
+]]
 macro(rcf_generate what projectid projectname foldergroup)
   set(RCF_GENERATE_SCOPE_STACK "${RCF_GENERATE_SCOPE_STACK};${projectid}" CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
   if(${ARGC} GREATER_EQUAL 5)
     set(${projectid}_FILES ${ARGN})
   endif()
   string(TOUPPER ${what} what_uppercase)
-  set(${projectid}_FILES "${${projectid}_FILES} ")
+  set(${projectid}_FILES "${${projectid}_FILES};")
   Generate(${what_uppercase} ${projectid} ${projectname} ${foldergroup})
 endmacro()
 
+#[[.rst rcf_endgenerate
+@brief Start a build target.
+@param what What kind of target(executable, module, shared, headeronly)?
+@param projectid Project identifier.
+@param projectname The name used in IDE, logs and so on.
+@param folderroup Visual Studio and other IDE support to place a target in a 
+logical spot instead of the one in the file system.
+]]
 macro(rcf_endgenerate)
   if(${ARGC} EQUAL 0)
 	set(projects ${RCF_GENERATE_SCOPE_STACK})	
