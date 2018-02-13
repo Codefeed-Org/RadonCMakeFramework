@@ -59,7 +59,6 @@ function(build_package location)
     COMMAND BuildVM -m folddef -o lj_folddef.h lj_opt_fold.c
     DEPENDS ${luajit_libfiles} lj_opt_fold.c
     WORKING_DIRECTORY "${location}/src/")  
-  set_source_files_properties(${output_dependencies} PROPERTIES GENERATED TRUE)      
   add_custom_target(BuildVM_Code_Generation 
     DEPENDS ${output_dependencies}
     WORKING_DIRECTORY "${location}/src/"

@@ -100,7 +100,7 @@ function(rcf_add_recursive rootdir suggested_ide_dirname)
 	AddSourceDirectoryRecursive(src_list ${rootdir} ${suggested_ide_dirname})
 	AddHeaderDirectoryRecursive(hdr_list ${rootdir} ${suggested_ide_dirname})
 	rcf_get_current_projectid(projectid)
-	target_sources(${${projectid}_NAME} PUBLIC ${${projectid}_FILES} ${src_list} ${hdr_list})
+	target_sources(${${projectid}_NAME} PRIVATE ${${projectid}_FILES} ${src_list} ${hdr_list})
 endfunction()
 
 function(AddAssemblerDirectoryRecursive var)	
