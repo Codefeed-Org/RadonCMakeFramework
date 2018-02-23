@@ -21,6 +21,12 @@ include("${RCF_PATH}/intern/CMakeDocumentation.cmake")
 
 rcf_getsysteminfos()
 
+if(NOT DEFINED RCF_DEFAULT_DIST_DIR)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dist")
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dist")
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dist")
+endif()
+
 if(DEFINED RCF_GENERATE_DOCUMENATION)
 	rcf_generate_doc(out "${PROJECT_BINARY_DIR}/rcf_doc"
 		includes "*.cmake" 

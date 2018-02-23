@@ -96,6 +96,17 @@ macro(Generate what projectid projectname foldergroup)
 	set_property(TARGET ${projectname} PROPERTY FOLDER ${foldergroup})
 endmacro()
 
+#[[.rst cmake:function:: rcf_dependencies(targetids)
+
+  This function allows to add one or more targets to the current active target.
+
+  :param targetids: A List of target IDs which should be added to the current target.
+]]
+function(rcf_dependencies targetids)
+	rcf_get_current_projectid(targetid)
+	set(${targetid}_DEPS ${${targetid}_DEPS} ${targetids} CACHE INTERNAL "")
+endfunction()
+
 macro(AddDependency projectid)
 	set(${projectid}_DEPS ${${projectid}_DEPS} ${ARGN} CACHE INTERNAL "")
 endmacro()
