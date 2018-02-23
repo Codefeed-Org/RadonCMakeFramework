@@ -1,0 +1,186 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Configuration hook &#8212; Radon CMake framework 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Generate" href="Generate.cmake.html" />
+    <link rel="prev" title="Welcome to Radon CMake framework’s documentation!" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="Generate.cmake.html" title="Generate"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Radon CMake framework’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Radon CMake framework 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Welcome to Radon CMake framework’s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Generate.cmake.html"
+                        title="next chapter">Generate</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="configuration-hook">
+<h1>Configuration hook<a class="headerlink" href="#configuration-hook" title="Permalink to this headline">¶</a></h1>
+<dl class="macro">
+<dt id="macro-rcf_addlocation">
+<code class="descname">rcf_addlocation</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">targetid</strong></span><span class="arg"><strong class="arg-flag">protocol</strong></span><span class="arg"><strong class="arg-flag">location</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#macro-rcf_addlocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>You can register an additional possible location where the target could be located.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>targetid</strong> – For which target you want to add an additional location.</li>
+<li><strong>protocol</strong> – Which protocol will be used ? E.g. “git”.</li>
+<li><strong>location</strong> – Specifies the location e.g. “<a class="reference external" href="https://github.com/Codefeed-Org/RadonCMakeFramework.git">https://github.com/Codefeed-Org/RadonCMakeFramework.git</a>”.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="macro">
+<dt id="macro-rcf_getlocation">
+<code class="descname">rcf_getlocation</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">targetid</strong></span><span class="arg"><strong class="arg-flag">locations</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#macro-rcf_getlocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all locations registered for the specified target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>targetid</strong> – For which target you want to get the locations.</li>
+<li><strong>locations</strong> – The variable name to which the locations should be copied.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="function-rcf_obtain">
+<code class="descname">rcf_obtain</code><span class="sig-paren">(</span><span class="long-argument-list"><span class="arg"><strong class="arg-flag">name</strong></span><span class="arg"><strong class="arg-flag">protocol</strong></span><span class="arg"><strong class="arg-flag">location</strong></span><span class="arg"><strong class="arg-flag">outdir</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#function-rcf_obtain" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allows you to obtain one or more files from different protocols
+and return the directory it’s located at.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> – The name which should be used in output if necessary.</li>
+<li><strong>protocol</strong> – Which protocol will be used ? E.g. “git”.</li>
+<li><strong>location</strong> – Specifies the location e.g. “<a class="reference external" href="https://github.com/Codefeed-Org/RadonCMakeFramework.git">https://github.com/Codefeed-Org/RadonCMakeFramework.git</a>”</li>
+<li><strong>outdir</strong> – The variable name to which the locations should be copied.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="macro">
+<dt id="macro-rcf_obtain_project">
+<code class="descname">rcf_obtain_project</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">targetid</strong></span><span class="arg"><strong class="arg-flag">outdir</strong></span><span class="arg"><span class="optional">[</span><strong class="arg-flag-optional">revision</strong><span class="optional">]</span></span></span><span class="sig-paren">)</span><a class="headerlink" href="#macro-rcf_obtain_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>This macro allows you to obtain the specified target by checking all registed
+locations in order they were added and return the location of the first hit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>targetid</strong> – The target ID which should be obtained.</li>
+<li><strong>outdir</strong> – The variable name to which the location should be copied.</li>
+<li><strong>revision</strong> – If specified and the first location is a version control system
+the revision will be used to switch to the specific commit.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="Generate.cmake.html" title="Generate"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Welcome to Radon CMake framework’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Radon CMake framework 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Thomas Kunze.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>

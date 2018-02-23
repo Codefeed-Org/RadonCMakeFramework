@@ -1,0 +1,38 @@
+Configuration hook
+==================
+
+.. cmake:macro:: rcf_addlocation(targetid protocol location)
+
+	You can register an additional possible location where the target could be located.
+
+	:param targetid: For which target you want to add an additional location.
+	:param protocol: Which protocol will be used ? E.g. "git".
+	:param location: Specifies the location e.g. "https://github.com/Codefeed-Org/RadonCMakeFramework.git".
+
+.. cmake:macro:: rcf_getlocation(targetid locations)
+
+	Get all locations registered for the specified target.
+
+	:param targetid: For which target you want to get the locations.
+	:param locations: The variable name to which the locations should be copied.
+
+.. cmake:function:: rcf_obtain(name protocol location outdir)
+
+	This function allows you to obtain one or more files from different protocols
+	and return the directory it's located at.
+
+	:param name: The name which should be used in output if necessary.
+	:param protocol: Which protocol will be used ? E.g. "git".
+	:param location: Specifies the location e.g. "https://github.com/Codefeed-Org/RadonCMakeFramework.git"
+	:param outdir: The variable name to which the locations should be copied.
+
+.. cmake:macro:: rcf_obtain_project(targetid outdir [revision])
+
+	This macro allows you to obtain the specified target by checking all registed
+	locations in order they were added and return the location of the first hit.
+
+	:param targetid: The target ID which should be obtained.
+	:param outdir: The variable name to which the location should be copied.
+	:param revision: If specified and the first location is a version control system 
+		the revision will be used to switch to the specific commit.
+

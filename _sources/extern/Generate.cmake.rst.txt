@@ -1,0 +1,21 @@
+Generate
+========
+
+.. cmake:macro:: rcf_generate(what targetid targetname foldergroup [files])
+
+  Generate a target with the specified parameter.
+
+  :param what: Defines the target type e.g. shared.
+  :param targetid: Defines the identifier which will be used in cmake.
+  :param targetname: Defines the user readable name.
+  :param foldergroup: Defines the logical location of the target e.g. "3rd Party" 
+  	will be add the target in a Visual Studio folder with this name.
+  :param files: You can add a list of files which will be part of the target.
+
+.. cmake:macro:: rcf_endgenerate([targetids])
+
+  Finalize the last generated target if no targetid was passed else all targets
+  will be closed in the order they are passed.  
+
+  :param targetids: A list of target IDs which should be closed in order.
+

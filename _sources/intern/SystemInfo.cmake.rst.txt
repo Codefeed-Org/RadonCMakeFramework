@@ -1,0 +1,10 @@
+System info
+===========
+
+.. cmake:macro:: rcf_getsysteminfos()
+
+    This macro will set following global variables.
+    
+* ${CMAKE_PROJECT_NAME}_COMPILEDFORARCHITECTURE
+* ${CMAKE_PROJECT_NAME}_ENDIANNESS
+

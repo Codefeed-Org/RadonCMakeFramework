@@ -1,0 +1,162 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Package management &#8212; Radon CMake framework 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="System info" href="SystemInfo.cmake.html" />
+    <link rel="prev" title="GCC" href="GCC.cmake.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="SystemInfo.cmake.html" title="System info"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="GCC.cmake.html" title="GCC"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Radon CMake framework 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="GCC.cmake.html"
+                        title="previous chapter">GCC</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="SystemInfo.cmake.html"
+                        title="next chapter">System info</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="package-management">
+<h1>Package management<a class="headerlink" href="#package-management" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="function-rcf_addpackage">
+<code class="descname">rcf_addpackage</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">packagename</strong></span><span class="arg"><span class="optional">[</span><strong class="arg-flag-optional">version</strong><span class="optional">]</span></span></span><span class="sig-paren">)</span><a class="headerlink" href="#function-rcf_addpackage" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will obtain and add the specified package to the project.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>packagename</strong> – Which package should be added to the project.</li>
+<li><strong>version</strong> – Specifies the version of the package.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="function-rcf_register_package">
+<code class="descname">rcf_register_package</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">name</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#function-rcf_register_package" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will register the specified package in the internal register and
+set the directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> – Which package should be registered.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="function-rcf_register_package_repository">
+<code class="descname">rcf_register_package_repository</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">name</strong></span><span class="arg"><strong class="arg-flag">protocol</strong></span><span class="arg"><strong class="arg-flag">source</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#function-rcf_register_package_repository" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allows to register a 3rd party repository to the project.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> – Specify the name of the repository.</li>
+<li><strong>protocol</strong> – Which protocol should be used to obtain it? E.g. “git”.</li>
+<li><strong>source</strong> – Specify the location of the 3rd party repository.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="SystemInfo.cmake.html" title="System info"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="GCC.cmake.html" title="GCC"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Radon CMake framework 1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Thomas Kunze.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.7.
+    </div>
+  </body>
+</html>
