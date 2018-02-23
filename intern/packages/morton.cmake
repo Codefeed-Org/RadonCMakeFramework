@@ -1,3 +1,6 @@
+#[[.rst libmorton
+=========
+]]
 set(package_protocol "git")
 set(package_source "https://github.com/Forceflow/libmorton.git")
 

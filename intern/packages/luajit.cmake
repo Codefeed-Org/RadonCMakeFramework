@@ -1,3 +1,6 @@
+#[[.rst luajit
+======
+]]
 set(package_protocol "git")
 set(package_source "http://luajit.org/git/luajit-2.0.git")
 

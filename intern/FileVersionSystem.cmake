@@ -1,9 +1,16 @@
-#
-# Supported systems: git, svn
-# Provided functionality:
-# -locate binaries
-# -get revision or identifier of current version
+#[[.rst File version system
+===================
 
+Currently supported
+
+* git
+* svn
+
+Provides following functionality
+
+* locate binaries
+* get revision or identifier of the current version
+]]
 set(RCF_REPO_CACHE_KEYS "" CACHE INTERNAL "Already loaded repositories.")
 
 #

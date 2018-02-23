@@ -1,8 +1,6 @@
-#
-# This file will help you to integrate a Radon CMake framework based project into your project.
-# http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
-# http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
-#
+#[[.rst Generate
+========
+]]
 macro(GenerateModule projectid)
 	add_library(${${projectid}_NAME} STATIC ${${projectid}_FILES} "")
 	target_link_libraries(${${projectid}_NAME} ${${projectid}_LIBS})
@@ -156,60 +154,62 @@ endmacro()
 
 set(RCF_GENERATE_SCOPE_STACK "" CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
 
-#[[.rst rcf_generate
-@brief Start a build target.
-@param what What kind of target(executable, module, shared, headeronly)?
-@param projectid Project identifier.
-@param projectname The name used in IDE, logs and so on.
-@param folderroup Visual Studio and other IDE support to place a target in a 
-logical spot instead of the one in the file system.
+#[[.rst .. cmake:macro:: rcf_generate(what targetid targetname foldergroup [files])
+
+  Generate a target with the specified parameter.
+
+  :param what: Defines the target type e.g. shared.
+  :param targetid: Defines the identifier which will be used in cmake.
+  :param targetname: Defines the user readable name.
+  :param foldergroup: Defines the logical location of the target e.g. "3rd Party" 
+  	will be add the target in a Visual Studio folder with this name.
+  :param files: You can add a list of files which will be part of the target.
 ]]
-macro(rcf_generate what projectid projectname foldergroup)
-  set(RCF_GENERATE_SCOPE_STACK "${RCF_GENERATE_SCOPE_STACK};${projectid}" CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
+macro(rcf_generate what targetid targetname foldergroup)
+  set(RCF_GENERATE_SCOPE_STACK "${RCF_GENERATE_SCOPE_STACK};${targetid}" CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
   if(${ARGC} GREATER_EQUAL 5)
-    set(${projectid}_FILES ${ARGN})
+    set(${targetid}_FILES ${ARGN})
   endif()
   string(TOUPPER ${what} what_uppercase)  
-  Generate(${what_uppercase} ${projectid} ${projectname} ${foldergroup})
+  Generate(${what_uppercase} ${targetid} ${targetname} ${foldergroup})
 endmacro()
 
-#[[.rst rcf_endgenerate
-@brief Start a build target.
-@param what What kind of target(executable, module, shared, headeronly)?
-@param projectid Project identifier.
-@param projectname The name used in IDE, logs and so on.
-@param folderroup Visual Studio and other IDE support to place a target in a 
-logical spot instead of the one in the file system.
+#[[.rst .. cmake:macro:: rcf_endgenerate([targetids])
+
+  Finalize the last generated target if no targetid was passed else all targets
+  will be closed in the order they are passed.  
+
+  :param targetids: A list of target IDs which should be closed in order.
 ]]
 macro(rcf_endgenerate)
   if(${ARGC} EQUAL 0)
-	set(projects ${RCF_GENERATE_SCOPE_STACK})	
-	list(LENGTH projects last)
+	set(targets ${RCF_GENERATE_SCOPE_STACK})	
+	list(LENGTH targets last)
 	math(EXPR last ${last}-1)
-    list(GET projects ${last} projectid)
-	list(REMOVE_AT projects ${last})
-	set(RCF_GENERATE_SCOPE_STACK ${projects} CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
-    Finalize(${projectid})
+    list(GET targets ${last} targetid)
+	list(REMOVE_AT targets ${last})
+	set(RCF_GENERATE_SCOPE_STACK ${targets} CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
+    Finalize(${targetid})
   else()
-	set(projects ${RCF_GENERATE_SCOPE_STACK})
-	set(projects_left ${ARGN})
-    list(REVERSE projects)
-	foreach(projectid ${projects})
-      list(FIND projects_left ${projectid} entry_index)
+	set(targets ${RCF_GENERATE_SCOPE_STACK})
+	set(targets_left ${ARGN})
+    list(REVERSE targets)
+	foreach(targetid ${targets})
+      list(FIND targets_left ${targetid} entry_index)
       if(NOT ${entry_index} EQUAL -1)
-		list(REMOVE_ITEM projects ${projectid})
-		list(REMOVE_AT projects_left ${entry_index})
-        Finalize(${projectid})
+		list(REMOVE_ITEM targets ${targetid})
+		list(REMOVE_AT targets_left ${entry_index})
+        Finalize(${targetid})
 	  else()
-	  	list(LENGTH projects_left projects_left_length)
-		if(${projects_left_length} GREATER 0)
-		  message(FATAL_ERROR "Project ${projectid} have to be finished first. Add it to the rcf_endgenerate(...) call.")
+	  	list(LENGTH targets_left targets_left_length)
+		if(${targets_left_length} GREATER 0)
+		  message(FATAL_ERROR "Target ${targetid} have to be finished first. Add it to the rcf_endgenerate(...) call.")
 		endif()
       endif()
 	endforeach()
-	if(NOT ${projects_left} STREQUAL "")
-		message(FATAL_ERROR "Attempt to finish following targets ${projects_left} failed. Because they don't exist.")
+	if(NOT ${targets_left} STREQUAL "")
+		message(FATAL_ERROR "Attempt to finish following targets ${targets_left} failed. Because they don't exist.")
 	endif()
-	set(RCF_GENERATE_SCOPE_STACK ${projects} CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
+	set(RCF_GENERATE_SCOPE_STACK ${targets} CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
   endif()
 endmacro()

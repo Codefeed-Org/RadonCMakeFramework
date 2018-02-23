@@ -12,7 +12,7 @@ The framework provides additional functions and macros to simplify the configura
 ## How I can use it ?
 1. copy the [bootstrap file](https://github.com/Codefeed-Org/RadonCMakeFramework/blob/master/extern/Integrate.cmake) to your project
 2. add `include("Integrate.cmake")` to your CMakeLists.txt
-3. setup your project and benefit from the [Radon CMake API](https://github.com/Codefeed-Org/RadonCMakeFramework/wiki)
+3. setup your project and benefit from the [Radon CMake API](https://codefeed-org.github.io/RadonCMakeFramework/)
 
 ## How I can support you ?
 * Get in contact with me and help me to improve the project.

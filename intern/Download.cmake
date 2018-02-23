@@ -1,9 +1,16 @@
-#
-# Supported systems: http, https
-# Provided functionality:
-# -download files from web
-# -execution chain
+#[[.rst File version system
+===================
 
+Currently supported
+
+* http
+* https
+
+Provides following functionality
+
+* download files from web
+* execution chain
+]]
 if(NOT DEFINED ${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS)
     set(${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS "" CACHE INTERNAL "Already loaded files.")
 endif()

@@ -1,7 +1,17 @@
+#[[.rst Package management
+==================
+]]
 get_filename_component(packagemanager_dir "${RCF_PATH}/intern/packages/" ABSOLUTE)
 
 set(RCF_PACKAGES "" CACHE INTERNAL "")
 
+#[[.rst .. cmake:function:: rcf_addpackage(packagename [version])
+
+  This function will obtain and add the specified package to the project.  
+
+  :param packagename: Which package should be added to the project.
+  :param version: Specifies the version of the package.
+]]
 function(rcf_addpackage packagename)
   set(package_version "newest")
   if(${ARGC} EQUAL 2)
@@ -39,11 +49,26 @@ function(rcf_addpackage packagename)
   endif()
 endfunction()
 
+#[[.rst .. cmake:function:: rcf_register_package(name)
+
+  This function will register the specified package in the internal register and 
+  set the directory.
+
+  :param name: Which package should be registered.
+]]
 function(rcf_register_package name)
   set(RCF_PACKAGES "${RCF_PACKAGES};${name}" CACHE INTERNAL "")
   set(${name}_PACKAGE_DIR "${CMAKE_CURRENT_LIST_DIR}/packages" CACHE INTERNAL "")
 endfunction()
 
+#[[.rst .. cmake:function:: rcf_register_package_repository(name protocol source)
+
+  This function allows to register a 3rd party repository to the project.
+
+  :param name: Specify the name of the repository.
+  :param protocol: Which protocol should be used to obtain it? E.g. "git".
+  :param source: Specify the location of the 3rd party repository.
+]]
 function(rcf_register_package_repository name protocol source)
   rcf_obtain(${name} ${protocol} ${source} dir)
   if (EXISTS ${dir}/packagelist.cmake)

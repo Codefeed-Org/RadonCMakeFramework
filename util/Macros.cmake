@@ -1,3 +1,6 @@
+#[[.rst Macros
+======
+]]
 function(AddResources projectid location destination)
     if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${location})
         set(mode copy_directory)
