@@ -6,8 +6,7 @@ install:
   - pip install docutils 
   - pip install Sphinx
   - pip install sphinxcontrib-websupport 
-  - pip install sphinxcontrib-domaintools 
-  - pip install sphinxcontrib-cmakedomain
+  - pip install sphinxcontrib-domaintools
 addons:
   apt:
     packages:
