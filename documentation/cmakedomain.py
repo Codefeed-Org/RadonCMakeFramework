@@ -20,7 +20,6 @@ from sphinx.locale import l_, _
 from sphinx.directives import ObjectDescription
 from sphinx.roles import XRefRole
 from sphinx.util.nodes import make_refnode
-from sphinx.util.compat import Directive
 
 cmake_param_desc_re = re.compile(
     r'([-_a-zA-Z0-9]+)\s+(.*)')
