@@ -1,4 +1,5 @@
 # Radon CMake framework
+![](https://travis-ci.org/Codefeed-Org/RadonCMakeFramework.svg?branch=master)
 The Radon CMake Framework is a set of scripts to simplify tasks like generating libraries, executables, integrate them into other projects and contains a package management system to add external libraries and tools to your project.
 
 ## Why I should use it ?
