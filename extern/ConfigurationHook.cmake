@@ -27,16 +27,6 @@ if(NOT DEFINED RCF_DEFAULT_DIST_DIR)
 	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dist")
 endif()
 
-if(DEFINED RCF_GENERATE_DOCUMENATION)
-	rcf_generate_doc(out "${PROJECT_BINARY_DIR}/rcf_doc"
-		includes "*.cmake" 
-		excludes "intern/CMakeDocumentation.cmake"
-		workingdir "${RCF_PATH}")
-	file(COPY "${RCF_PATH}/documentation/" DESTINATION "${PROJECT_BINARY_DIR}/rcf_doc/")
-	execute_process(COMMAND sphinx-build -M html . build
-		WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/rcf_doc/")
-endif()
-
 #[[.rst .. cmake:macro:: rcf_addlocation(targetid protocol location)
 
 	You can register an additional possible location where the target could be located.
