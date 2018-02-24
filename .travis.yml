@@ -3,7 +3,7 @@ os: linux
 python:
   - "3.4"
 install:
-  - pip install Sphinx sphinxcontrib-websupport sphinxcontrib-domaintools sphinxcontrib-cmakedomain
+  - pip install docutils Sphinx sphinxcontrib-websupport sphinxcontrib-domaintools sphinxcontrib-cmakedomain
 addons:
   apt:
     packages:
