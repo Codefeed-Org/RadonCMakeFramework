@@ -20,4 +20,4 @@ deploy:
   keep-history: true
   local-dir: rcf_doc/build/html
   on:
-    branch: gh-pages
+    branch: master
