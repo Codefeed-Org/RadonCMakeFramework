@@ -1,3 +1,6 @@
+#[[.rst Simple DirectMedia Layer(SDL)
+=============================
+]]
 set(package_protocol "git")
 set(package_source "https://github.com/SDL-mirror/SDL")
 

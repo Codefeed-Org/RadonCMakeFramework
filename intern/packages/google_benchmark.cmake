@@ -1,3 +1,6 @@
+#[[.rst Google Benchmark
+================
+]]
 set(package_protocol "git")
 set(package_source "https://github.com/google/benchmark.git")
 

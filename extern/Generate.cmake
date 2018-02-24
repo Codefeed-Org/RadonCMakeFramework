@@ -96,7 +96,7 @@ macro(Generate what projectid projectname foldergroup)
 	set_property(TARGET ${projectname} PROPERTY FOLDER ${foldergroup})
 endmacro()
 
-#[[.rst cmake:function:: rcf_dependencies(targetids)
+#[[.rst .. cmake:function:: rcf_dependencies(targetids)
 
   This function allows to add one or more targets to the current active target.
 

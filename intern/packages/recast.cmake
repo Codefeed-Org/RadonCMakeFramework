@@ -1,3 +1,6 @@
+#[[.rst Recast navigation
+=================
+]]
 set(package_protocol "git")
 set(package_source "https://github.com/recastnavigation/recastnavigation.git")
 
