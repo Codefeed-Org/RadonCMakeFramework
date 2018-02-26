@@ -102,9 +102,9 @@ endmacro()
 
   :param targetids: A List of target IDs which should be added to the current target.
 ]]
-function(rcf_dependencies targetids)
+function(rcf_dependencies)
 	rcf_get_current_projectid(targetid)
-	set(${targetid}_DEPS ${${targetid}_DEPS} ${targetids} CACHE INTERNAL "")
+	set(${targetid}_DEPS ${${targetid}_DEPS} ${ARGN} CACHE INTERNAL "")
 endfunction()
 
 macro(AddDependency projectid)
