@@ -1,6 +1,12 @@
 Generate
 ========
 
+.. cmake:function:: rcf_dependencies(targetids)
+
+  This function allows to add one or more targets to the current active target.
+
+  :param targetids: A List of target IDs which should be added to the current target.
+
 .. cmake:macro:: rcf_generate(what targetid targetname foldergroup [files])
 
   Generate a target with the specified parameter.
