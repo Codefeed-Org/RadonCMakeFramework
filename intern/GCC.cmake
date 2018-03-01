@@ -1,8 +1,6 @@
-#
-# This file will help you to integrate a Radon CMake framework based project into your project.
-# http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
-# http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
-#
+#[[.rst GCC
+===
+]]
 include(CheckIncludeFiles)
 
 macro(ConfigureCompilerAndLinkerGCC projectid buildtype)

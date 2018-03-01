@@ -1,0 +1,9 @@
+.arg{
+	padding-right:0.2em;
+	padding-left:0.2em;
+}
+
+.arg-flag-optional,.optional{
+	font-weight: lighter;
+	font-size: 1.0em;
+}

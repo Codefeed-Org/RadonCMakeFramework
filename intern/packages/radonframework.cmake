@@ -1,3 +1,6 @@
+#[[.rst Radon framework
+===============
+]]
 set(package_protocol "git")
 set(package_source "https://github.com/tak2004/RadonFramework.git")
 

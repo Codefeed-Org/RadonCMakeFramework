@@ -1,22 +1,25 @@
-#
-# This file will help you to integrate a Radon CMake framework based project into your project.
-# http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
-# http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
-#
+#[[.rst Generate
+========
+]]
 macro(GenerateModule projectid)
-	add_library(${${projectid}_NAME} STATIC ${${projectid}_FILES})
+	add_library(${${projectid}_NAME} STATIC ${${projectid}_FILES} "")
 	target_link_libraries(${${projectid}_NAME} ${${projectid}_LIBS})
 	set(${projectid}_ISMODULE ON CACHE INTERNAL "Project is a module.")
 endmacro()
 
 macro(GenerateSharedLibrary projectid)
-	add_library(${${projectid}_NAME} SHARED ${${projectid}_FILES})
+	add_library(${${projectid}_NAME} SHARED ${${projectid}_FILES} "")
 	target_link_libraries(${${projectid}_NAME} ${${projectid}_LIBS})
 	set(${projectid}_ISLIBRARY ON CACHE INTERNAL "Project is a shared library.")
 endmacro()
 
+macro(GenerateHeaderOnly projectid)
+	add_custom_target(${${projectid}_NAME} SOURCES ${${projectid}_FILES} "")
+	set(${projectid}_ISHEADERONLY ON CACHE INTERNAL "Project is a header onnly target.")
+endmacro()
+
 macro(GenerateExecutable projectid)
-	add_executable(${${projectid}_NAME} ${${projectid}_FILES})    
+	add_executable(${${projectid}_NAME} ${${projectid}_FILES} "")
 	target_link_libraries(${${projectid}_NAME} ${${projectid}_LIBS})
 	set(${projectid}_ISEXECUTABLE ON CACHE INTERNAL "Project is an executable.")
 endmacro()
@@ -83,6 +86,8 @@ macro(Generate what projectid projectname foldergroup)
 		GenerateModule(${projectid})
 	elseif(${what} STREQUAL "SHARED")
 		GenerateSharedLibrary(${projectid})
+	elseif(${what} STREQUAL "HEADERONLY")
+		GenerateHeaderOnly(${projectid})
 	else()
 		GenerateExecutable(${projectid})
 	endif()	
@@ -90,6 +95,17 @@ macro(Generate what projectid projectname foldergroup)
 	ConfigureCompilerAndLinker(${projectid} ${what})
 	set_property(TARGET ${projectname} PROPERTY FOLDER ${foldergroup})
 endmacro()
+
+#[[.rst .. cmake:function:: rcf_dependencies(targetids)
+
+  This function allows to add one or more targets to the current active target.
+
+  :param targetids: A List of target IDs which should be added to the current target.
+]]
+function(rcf_dependencies)
+	rcf_get_current_projectid(targetid)
+	set(${targetid}_DEPS ${${targetid}_DEPS} ${ARGN} CACHE INTERNAL "")
+endfunction()
 
 macro(AddDependency projectid)
 	set(${projectid}_DEPS ${${projectid}_DEPS} ${ARGN} CACHE INTERNAL "")
@@ -102,9 +118,11 @@ macro(Finalize projectid)
 	endif()
 	
 	foreach(dep ${${projectid}_DEPS})
-		if(DEFINED ${${dep}_ID}_ISLIBRARY OR DEFINED ${${dep}_ID}_ISMODULE)
+		if(DEFINED ${${dep}_ID}_ISLIBRARY OR DEFINED ${${dep}_ID}_ISMODULE OR DEFINED ${${dep}_ID}_ISHEADERONLY)
 			# assign public libraries from the dependency
-			target_link_libraries(${${projectid}_NAME} ${dep})
+			if(NOT DEFINED ${${dep}_ID}_ISHEADERONLY)
+				target_link_libraries(${${projectid}_NAME} ${dep})
+			endif()
 			# assign public includes from the dependency
 			include_directories(${${${dep}_ID}_PUBLIC_INCLUDES})
 			# assign public defines from the dependency
@@ -130,6 +148,8 @@ macro(GenerateCustomTargetMetaInfo what projectname projectid foldergroup)
 		set(${projectid}_ISMODULE ON CACHE INTERNAL "Project is a module.")
 	elseif(${what} STREQUAL "SHARED")
 		set(${projectid}_ISLIBRARY ON CACHE INTERNAL "Project is a shared library.")
+	elseif(${what} STREQUAL "HEADERONLY")
+		set(${projectid}_ISHEADERONLY ON CACHE INTERNAL "Project is a header only target.")		
 	else()
 		set(${projectid}_ISEXECUTABLE ON CACHE INTERNAL "Project is an executable.")
 	endif()
@@ -145,44 +165,62 @@ endmacro()
 
 set(RCF_GENERATE_SCOPE_STACK "" CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
 
-macro(rcf_generate what projectid projectname foldergroup)
-  set(RCF_GENERATE_SCOPE_STACK "${RCF_GENERATE_SCOPE_STACK};${projectid}" CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
+#[[.rst .. cmake:macro:: rcf_generate(what targetid targetname foldergroup [files])
+
+  Generate a target with the specified parameter.
+
+  :param what: Defines the target type e.g. shared.
+  :param targetid: Defines the identifier which will be used in cmake.
+  :param targetname: Defines the user readable name.
+  :param foldergroup: Defines the logical location of the target e.g. "3rd Party" 
+  	will be add the target in a Visual Studio folder with this name.
+  :param files: You can add a list of files which will be part of the target.
+]]
+macro(rcf_generate what targetid targetname foldergroup)
+  set(RCF_GENERATE_SCOPE_STACK "${RCF_GENERATE_SCOPE_STACK};${targetid}" CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
   if(${ARGC} GREATER_EQUAL 5)
-    set(${projectid}_FILES ${ARGN})
+    set(${targetid}_FILES ${ARGN})
   endif()
-  string(TOUPPER ${what} what_uppercase)
-  Generate(${what_uppercase} ${projectid} ${projectname} ${foldergroup})
+  string(TOUPPER ${what} what_uppercase)  
+  Generate(${what_uppercase} ${targetid} ${targetname} ${foldergroup})
 endmacro()
 
+#[[.rst .. cmake:macro:: rcf_endgenerate([targetids])
+
+  Finalize the last generated target if no targetid was passed else all targets
+  will be closed in the order they are passed.  
+
+  :param targetids: A list of target IDs which should be closed in order.
+]]
 macro(rcf_endgenerate)
   if(${ARGC} EQUAL 0)
-	set(projects ${RCF_GENERATE_SCOPE_STACK})	
-	list(LENGTH projects last)
+	set(targets ${RCF_GENERATE_SCOPE_STACK})	
+	list(LENGTH targets last)
 	math(EXPR last ${last}-1)
-    list(GET projects ${last} projectid)
-	list(REMOVE_AT projects ${last})
-	set(RCF_GENERATE_SCOPE_STACK ${projects} CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
-    Finalize(${projectid})
+    list(GET targets ${last} targetid)
+	list(REMOVE_AT targets ${last})
+	set(RCF_GENERATE_SCOPE_STACK ${targets} CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
+    Finalize(${targetid})
   else()
-	set(projects ${RCF_GENERATE_SCOPE_STACK})
-	set(projects_left ${ARGN})
-    list(REVERSE projects)
-	foreach(projectid ${projects})
-      list(FIND projects_left ${projectid} entry_index)
+	set(targets ${RCF_GENERATE_SCOPE_STACK})
+	set(targets_left ${ARGN})
+    list(REVERSE targets)
+	foreach(targetid ${targets})
+      list(FIND targets_left ${targetid} entry_index)
       if(NOT ${entry_index} EQUAL -1)
-		list(REMOVE_ITEM projects ${projectid})
-		list(REMOVE_AT projects_left ${entry_index})
-        Finalize(${projectid})
+		list(REMOVE_ITEM targets ${targetid})
+		list(REMOVE_AT targets_left ${entry_index})
+        Finalize(${targetid})
 	  else()
-	  	list(LENGTH projects_left projects_left_length)
-		if(${projects_left_length} GREATER 0)
-		  message(FATAL_ERROR "Project ${projectid} have to be finished first. Add it to the rcf_endgenerate(...) call.")
+	  	list(LENGTH targets_left targets_left_length)
+		if(${targets_left_length} GREATER 0)
+		  message(FATAL_ERROR "Target ${targetid} have to be finished first. Add it to the rcf_endgenerate(...) call.")
 		endif()
       endif()
 	endforeach()
-	if(NOT ${projects_left} STREQUAL "")
-		message(FATAL_ERROR "Attempt to finish following targets ${projects_left} failed. Because they don't exist.")
+	if(NOT ${targets_left} STREQUAL "")
+		message(FATAL_ERROR "Attempt to finish following targets ${targets_left} failed. Because they don't exist.")
 	endif()
-	set(RCF_GENERATE_SCOPE_STACK ${projects} CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
+	set(RCF_GENERATE_SCOPE_STACK ${targets} CACHE INTERNAL "A stack of the not closed rcf_generate calls.")
   endif()
 endmacro()

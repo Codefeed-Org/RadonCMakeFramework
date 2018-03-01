@@ -1,3 +1,6 @@
+#[[.rst jsoncpp
+=======
+]]
 set(package_protocol "git")
 set(package_source "https://github.com/open-source-parsers/jsoncpp.git")
 

@@ -1,3 +1,6 @@
+#[[.rst Visual GDB
+==========
+]]
 include(CMakeDependentOption)
 if(MSVC)
     option(USE_VGDB "Enable Visual GDB support" OFF)

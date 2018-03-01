@@ -1,3 +1,6 @@
+#[[.rst xxHash
+======
+]]
 set(package_protocol "git")
 set(package_source "https://github.com/Cyan4973/xxHash.git")
 

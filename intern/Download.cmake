@@ -1,11 +1,16 @@
-#
-# Supported systems: http, https
-# Provided functionality:
-# -download files from web
-# -execution chain
+#[[.rst File version system
+===================
 
-cmake_policy(SET CMP0057 NEW)
+Currently supported
 
+* http
+* https
+
+Provides following functionality
+
+* download files from web
+* execution chain
+]]
 if(NOT DEFINED ${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS)
     set(${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS "" CACHE INTERNAL "Already loaded files.")
 endif()
@@ -20,6 +25,8 @@ macro(rcf_generatefilepath targetdir url variable)
 endmacro()
 
 function(rcf_download url projectid outdir)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0057 NEW)
 	message(STATUS "${projectid} need ${url}")
 	if("${url}" IN_LIST ${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS)
     if(EXISTS ${${${CMAKE_PROJECT_NAME}_DOWNLOAD_CACHE_KEYS}_PATH})
@@ -57,4 +64,5 @@ function(rcf_download url projectid outdir)
 			rcf_download_success(${projectid} ${url} ${localdir})
 		endif()
 	endif()
+    cmake_policy(POP)
 endfunction()

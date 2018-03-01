@@ -1,8 +1,6 @@
-#
-# This file will help you to integrate a Radon CMake framework based project into your project.
-# http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
-# http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
-#
+#[[.rst Compiler and linker setttings
+=============================
+]]
 include("${RCF_PATH}/intern/VisualStudio.cmake")
 include("${RCF_PATH}/intern/GCC.cmake")
 include("${RCF_PATH}/intern/XCode.cmake")
@@ -159,8 +157,11 @@ macro(FinalizeCompilerAndLinkerSettings projectid)
 	ProcessDefinesXCode(${projectid})
 
     message(STATUS "flags: ${${projectid}_COMPILER_FLAGS}")
-    set_target_properties(${${projectid}_NAME} PROPERTIES COMPILE_FLAGS ${${projectid}_COMPILER_FLAGS})
-    target_compile_options(${${projectid}_NAME} PRIVATE $<$<CONFIG:DEBUG>:${${projectid}_COMPILER_FLAGS_DEBUG}> $<$<CONFIG:RELEASE>:${${projectid}_COMPILER_FLAGS_RELEASE}> $<$<CONFIG:RELWITHDEBINFO>:${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO}> $<$<CONFIG:MINSIZEREL>:${${projectid}_COMPILER_FLAGS_RELMINSIZE}>)
+	set_target_properties(${${projectid}_NAME} PROPERTIES COMPILE_FLAGS ${${projectid}_COMPILER_FLAGS})
+	
+	if(NOT ${${projectid}_WHAT} STREQUAL "HEADERONLY")
+    	target_compile_options(${${projectid}_NAME} PRIVATE $<$<CONFIG:DEBUG>:${${projectid}_COMPILER_FLAGS_DEBUG}> $<$<CONFIG:RELEASE>:${${projectid}_COMPILER_FLAGS_RELEASE}> $<$<CONFIG:RELWITHDEBINFO>:${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO}> $<$<CONFIG:MINSIZEREL>:${${projectid}_COMPILER_FLAGS_RELMINSIZE}>)
+	endif()
 
     if(${${projectid}_WHAT} STREQUAL "EXECUTABLE")    
         if (NOT ${${projectid}_LINKER_FLAGS} STREQUAL "")

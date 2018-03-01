@@ -1,15 +1,6 @@
-#
-# This file will help you to integrate a Radon CMake framework based project into your project.
-# http://www.radonframework.org/projects/rf/wiki/UserManualCMakeFramework
-# http://www.radonframework.org/projects/rf/wiki/DeveloperManualCMakeFramework
-#
-# It will be included by extern/Integrate.cmake 
-# and move most of the configuration into Radon CMake framework scope.
-#
-
-# Obtain Radon CMake framework root path to call the other scripts from there.
-# At this point the projectid is not set yet but the name of the cmake project
-# is available and all macros called in it's scope. 
+#[[.rst Configuration hook
+==================
+]]
 set(RCF_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 
 cmake_policy(SET CMP0057 NEW)
@@ -21,24 +12,44 @@ if(NOT DEFINED checkRepo)
                     WORKING_DIRECTORY "${RCF_PATH}")
     set_property(GLOBAL PROPERTY RCF_REPO_CHECK true)
 endif()
-# The following includes are the only exception where an other variable than
-# ${${projectid}_LOCATION} is used to access files of the framework.
-include("${RCF_PATH}/util/CMakeFunctionShortcut.cmake")
+
 include("${RCF_PATH}/util/Macros.cmake")
 include("${RCF_PATH}/intern/FileVersionSystem.cmake")
 include("${RCF_PATH}/intern/Download.cmake")
 include("${RCF_PATH}/extern/Integrate.cmake")
 include("${RCF_PATH}/intern/SystemInfo.cmake")
 include("${RCF_PATH}/intern/PackageManagement.cmake")
+include("${RCF_PATH}/intern/CMakeDocumentation.cmake")
 
 rcf_getsysteminfos()
 
-macro(rcf_addlocation projectid protocol location)
-	set(${projectid}_Locations ${${projectid}_Locations} "${protocol} ${location}")
+if(NOT DEFINED RCF_DEFAULT_DIST_DIR)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dist")
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dist")
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/dist")
+endif()
+
+#[[.rst .. cmake:macro:: rcf_addlocation(targetid protocol location)
+
+	You can register an additional possible location where the target could be located.
+
+	:param targetid: For which target you want to add an additional location.
+	:param protocol: Which protocol will be used ? E.g. "git".
+	:param location: Specifies the location e.g. "https://github.com/Codefeed-Org/RadonCMakeFramework.git".
+]]
+macro(rcf_addlocation targetid protocol location)
+	set(${targetid}_Locations ${${targetid}_Locations} "${protocol} ${location}")
 endmacro()
 
+#[[.rst .. cmake:macro:: rcf_getlocation(targetid locations)
+
+	Get all locations registered for the specified target.
+
+	:param targetid: For which target you want to get the locations.
+	:param locations: The variable name to which the locations should be copied.
+]]
 macro(rcf_getlocations projectid locations)
-	set(locations ${${projectid}_Locations})
+	set(${locations} ${${projectid}_Locations})
 endmacro()
 
 macro(ConfigureProject projectid path)
@@ -85,7 +96,54 @@ macro(FailSafe projectid projectname)
 	endif()
 endmacro()
 
-macro(rcf_obtain_project projectid outdir)
+#[[.rst .. cmake:function:: rcf_obtain(name protocol location outdir)
+
+	This function allows you to obtain one or more files from different protocols
+	and return the directory it's located at.
+
+	:param name: The name which should be used in output if necessary.
+	:param protocol: Which protocol will be used ? E.g. "git".
+	:param location: Specifies the location e.g. "https://github.com/Codefeed-Org/RadonCMakeFramework.git"
+	:param outdir: The variable name to which the locations should be copied.
+]]
+function(rcf_obtain name protocol location outdir)
+	if(${protocol} STREQUAL "file")
+		if(EXISTS "${location}")
+			set(${outdir} ${location} PARENT_SCOPE)
+		else()
+			message(AUTHOR_WARNING "${name} '${location}' doesn't exists !")
+		endif()
+	elseif(${protocol} STREQUAL "env")
+		if(EXISTS "$ENV{${location}}/")
+			set(${outdir} "$ENV{${location}}/" PARENT_SCOPE)
+		else()
+			message(AUTHOR_WARNING "Add user or system environment variable ${environmentname} !")
+		endif()
+	elseif(${protocol} STREQUAL "download")
+		rcf_download(${location} ${name} dir)
+		set(${outdir} ${dir} PARENT_SCOPE)
+	else()#file version system
+		if(DEFINED GetSpecificVersion)
+			rfc_getreporevision(${location} ${protocol} ${name} ${GetSpecificVersion} dir)                
+			unset(GetSpecificVersion)
+		else()
+			rcf_getrepo(${location} ${protocol} ${name} dir)
+		endif()
+		set(${outdir} ${dir} PARENT_SCOPE)
+	endif()
+endfunction()
+
+#[[.rst .. cmake:macro:: rcf_obtain_project(targetid outdir [revision])
+
+	This macro allows you to obtain the specified target by checking all registed
+	locations in order they were added and return the location of the first hit.
+
+	:param targetid: The target ID which should be obtained.
+	:param outdir: The variable name to which the location should be copied.
+	:param revision: If specified and the first location is a version control system 
+		the revision will be used to switch to the specific commit.
+]]
+macro(rcf_obtain_project targetid outdir)
     set(outdir "")
     set (extra_macro_args ${ARGN})
     list(LENGTH extra_macro_args num_extra_args)
@@ -94,7 +152,7 @@ macro(rcf_obtain_project projectid outdir)
         list(GET extra_macro_args 0 GetSpecificVersion)
     endif()
     
-	foreach(entry ${${projectid}_Locations})
+	foreach(entry ${${targetid}_Locations})
 		separate_arguments(entry)
 		list(GET entry 0 protocol)
 		list(GET entry 1 location)
@@ -111,13 +169,13 @@ macro(rcf_obtain_project projectid outdir)
 				message(AUTHOR_WARNING "Add user or system environment variable ${environmentname} !")
 			endif()
 		elseif(${protocol} STREQUAL "download")
-			rcf_download(${location} ${projectid} outdir)
+			rcf_download(${location} ${targetid} outdir)
 		else()#file version system
             if(DEFINED GetSpecificVersion)
-                rfc_getreporevision(${location} ${protocol} ${projectid} ${GetSpecificVersion} outdir)                
+                rfc_getreporevision(${location} ${protocol} ${targetid} ${GetSpecificVersion} outdir)                
                 unset(GetSpecificVersion)
             else()
-                rcf_getrepo(${location} ${protocol} ${projectid} outdir)            
+                rcf_getrepo(${location} ${protocol} ${targetid} outdir)            
             endif()
 		endif()
 		

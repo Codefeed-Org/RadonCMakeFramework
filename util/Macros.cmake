@@ -1,3 +1,6 @@
+#[[.rst Macros
+======
+]]
 function(AddResources projectid location destination)
     if (IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${location})
         set(mode copy_directory)
@@ -86,6 +89,21 @@ function(AddSourceDirectoryRecursive var)
 		source_group("${ARGV2}\\${REL_DIR}" FILES ${src})
 	endforeach()
 	set("${var}" ${locale_files} PARENT_SCOPE)
+endfunction()
+
+function(rcf_get_current_projectid var)
+	set(projects ${RCF_GENERATE_SCOPE_STACK})	
+	list(LENGTH projects last)
+	math(EXPR last ${last}-1)
+	list(GET projects ${last} projectid)
+	set(${var} ${projectid} PARENT_SCOPE)
+endfunction()
+
+function(rcf_add_recursive rootdir suggested_ide_dirname)
+	AddSourceDirectoryRecursive(src_list ${rootdir} ${suggested_ide_dirname})
+	AddHeaderDirectoryRecursive(hdr_list ${rootdir} ${suggested_ide_dirname})
+	rcf_get_current_projectid(projectid)
+	target_sources(${${projectid}_NAME} PRIVATE ${${projectid}_FILES} ${src_list} ${hdr_list})
 endfunction()
 
 function(AddAssemblerDirectoryRecursive var)	
