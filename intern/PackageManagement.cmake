@@ -1,6 +1,14 @@
 get_filename_component(packagemanager_dir "${RCF_PATH}/intern/packages/" ABSOLUTE)
 
+set(RCF_ADDED_PACKAGES "" CACHE INTERNAL "")
+
 function(rcf_addpackage packagename)
+  if(${packagename} IN_LIST RCF_ADDED_PACKAGES)
+    return()
+  else()
+    set(RCF_ADDED_PACKAGES "${RCF_ADDED_PACKAGES};${packagename}" CACHE INTERNAL "")
+  endif()
+
   set(package_version "newest")
   if(${ARGC} EQUAL 2)
     set(package_version ${ARGV1})

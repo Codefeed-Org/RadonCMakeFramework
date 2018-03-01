@@ -12,6 +12,8 @@
 # is available and all macros called in it's scope. 
 set(RCF_PATH "${CMAKE_CURRENT_LIST_DIR}/..")
 
+cmake_policy(SET CMP0057 NEW)
+
 get_property(checkRepo GLOBAL PROPERTY RCF_REPO_CHECK)
 if(NOT DEFINED checkRepo)
     message(STATUS "Check for newest version of Radon CMake framework.")
