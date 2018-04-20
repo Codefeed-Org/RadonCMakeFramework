@@ -91,14 +91,30 @@ function(AddSourceDirectoryRecursive var)
 	set("${var}" ${locale_files} PARENT_SCOPE)
 endfunction()
 
-function(rcf_get_current_projectid var)
+#[[.rst .. cmake:function:: rcf_get_current_projectid(writeTo)
+
+  Obtain the project id of the current target. This function must be called after
+  rcf_generate(...) and before rcf_endgenerate(...).
+
+  :param writeTo: The target at which the project id will be written at.
+]]
+function(rcf_get_current_projectid writeTo)
 	set(projects ${RCF_GENERATE_SCOPE_STACK})	
 	list(LENGTH projects last)
 	math(EXPR last ${last}-1)
 	list(GET projects ${last} projectid)
-	set(${var} ${projectid} PARENT_SCOPE)
+	set(${writeTo} ${projectid} PARENT_SCOPE)
 endfunction()
 
+#[[.rst .. cmake:function:: rcf_add_recursive(rootdir suggested_ide_dirname)
+
+  This function will add recursive all header and source files of the specified 
+  directory and their childs. If the cmake generator supports virtual folder 
+  then the files will be placed relative to the specified name.
+
+  :param rootdir: Specifies the directory at which the files should be searched.
+  :param suggested_ide_dirname: Name of the virtual folder which should be used in the IDE.
+]]
 function(rcf_add_recursive rootdir suggested_ide_dirname)
 	AddSourceDirectoryRecursive(src_list ${rootdir} ${suggested_ide_dirname})
 	AddHeaderDirectoryRecursive(hdr_list ${rootdir} ${suggested_ide_dirname})
@@ -158,6 +174,20 @@ macro(AddPublicInclude projectid addpath)
 	include_directories(${addpath})
 endmacro()
 
+#[[.rst .. cmake:function:: rcf_add_public_include(addpath)
+
+  Add the specified path to the public include directories.
+  This function calls include_directories(), keep track of the public directories
+  and add the directories to all targets which depend on the current target.
+
+  :param addpath: The directory which should be added to the public include list.
+]]
+function(rcf_add_public_include addpath)
+	rcf_get_current_projectid(projectid)
+	set(${projectid}_PUBLIC_INCLUDES ${${projectid}_PUBLIC_INCLUDES} ${addpath} CACHE INTERNAL "include directories")
+	include_directories(${addpath})
+endfunction()
+
 macro(AddPublicDefine projectid)
 	set(${projectid}_COMPILER_DEFINES "${${projectid}_COMPILER_DEFINES};${ARGN}" CACHE INTERNAL "Project public defines")
 endmacro()
@@ -174,10 +204,35 @@ if(NOT DEFINED ${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES)
 	set(${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES "" CACHE INTERNAL "List of all source_dir passed to add_subdirectory.")
 endif()
 
+#[[.rst .. cmake:function:: rcf_add_subdirectory_once(source_dir)
+
+  Add the specified directory if not happend yet and block upcomming request.
+  The function use a internal list to remember all added directories by this function.
+  If you want to execute a script only once per run then use rcf_add_subdirectory_once_per_run().
+
+  :param source_dir: The directory which should be added to CMake and executed.
+]]
 macro(rcf_add_subdirectory_once source_dir)
 	if(NOT ";${source_dir};" MATCHES ";${${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES};")
 		add_subdirectory(${source_dir} ${ARGN})
 		list(APPEND ${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES ${source_dir})
+	endif()
+endmacro()
+
+set(${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES_CURRENT_RUN "" CACHE INTERNAL "List of all source_dir passed to add_subdirectory.")
+
+#[[.rst .. cmake:function:: rcf_add_subdirectory_once_per_run(source_dir)
+
+  Add the specified directory if not happend yet and block upcomming request for this run.
+  The function use a internal list to remember all added directories by this function.
+  If you want to execute a script only once over multiple runs then use rcf_add_subdirectory_once().
+
+  :param source_dir: The directory which should be added to CMake and executed.
+]]
+macro(rcf_add_subdirectory_once_per_run source_dir)
+	if(NOT ";${source_dir};" MATCHES ";${${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES_CURRENT_RUN};")
+		add_subdirectory(${source_dir} ${ARGN})
+		list(APPEND ${CMAKE_PROJECT_NAME}_ADDED_SUBDIRECTORIES_CURRENT_RUN ${source_dir})
 	endif()
 endmacro()
 
