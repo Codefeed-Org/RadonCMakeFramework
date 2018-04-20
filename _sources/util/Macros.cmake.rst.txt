@@ -1,3 +1,43 @@
 Macros
 ======
 
+.. cmake:function:: rcf_get_current_projectid(writeTo)
+
+  Obtain the project id of the current target. This function must be called after
+  rcf_generate(...) and before rcf_endgenerate(...).
+
+  :param writeTo: The target at which the project id will be written at.
+
+.. cmake:function:: rcf_add_recursive(rootdir suggested_ide_dirname)
+
+  This function will add recursive all header and source files of the specified 
+  directory and their childs. If the cmake generator supports virtual folder 
+  then the files will be placed relative to the specified name.
+
+  :param rootdir: Specifies the directory at which the files should be searched.
+  :param suggested_ide_dirname: Name of the virtual folder which should be used in the IDE.
+
+.. cmake:function:: rcf_add_public_include(addpath)
+
+  Add the specified path to the public include directories.
+  This function calls include_directories(), keep track of the public directories
+  and add the directories to all targets which depend on the current target.
+
+  :param addpath: The directory which should be added to the public include list.
+
+.. cmake:function:: rcf_add_subdirectory_once(source_dir)
+
+  Add the specified directory if not happend yet and block upcomming request.
+  The function use a internal list to remember all added directories by this function.
+  If you want to execute a script only once per run then use rcf_add_subdirectory_once_per_run().
+
+  :param source_dir: The directory which should be added to CMake and executed.
+
+.. cmake:function:: rcf_add_subdirectory_once_per_run(source_dir)
+
+  Add the specified directory if not happend yet and block upcomming request for this run.
+  The function use a internal list to remember all added directories by this function.
+  If you want to execute a script only once over multiple runs then use rcf_add_subdirectory_once().
+
+  :param source_dir: The directory which should be added to CMake and executed.
+

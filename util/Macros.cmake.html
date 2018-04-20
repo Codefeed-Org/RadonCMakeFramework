@@ -72,6 +72,101 @@
             
   <div class="section" id="macros">
 <h1>Macros<a class="headerlink" href="#macros" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="function-rcf_get_current_projectid">
+<code class="descname">rcf_get_current_projectid</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">writeTo</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#function-rcf_get_current_projectid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain the project id of the current target. This function must be called after
+rcf_generate(…) and before rcf_endgenerate(…).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>writeTo</strong> – The target at which the project id will be written at.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="function-rcf_add_recursive">
+<code class="descname">rcf_add_recursive</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">rootdir</strong></span><span class="arg"><strong class="arg-flag">suggested_ide_dirname</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#function-rcf_add_recursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will add recursive all header and source files of the specified
+directory and their childs. If the cmake generator supports virtual folder
+then the files will be placed relative to the specified name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>rootdir</strong> – Specifies the directory at which the files should be searched.</li>
+<li><strong>suggested_ide_dirname</strong> – Name of the virtual folder which should be used in the IDE.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="function-rcf_add_public_include">
+<code class="descname">rcf_add_public_include</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">addpath</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#function-rcf_add_public_include" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the specified path to the public include directories.
+This function calls include_directories(), keep track of the public directories
+and add the directories to all targets which depend on the current target.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>addpath</strong> – The directory which should be added to the public include list.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="function-rcf_add_subdirectory_once">
+<code class="descname">rcf_add_subdirectory_once</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">source_dir</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#function-rcf_add_subdirectory_once" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the specified directory if not happend yet and block upcomming request.
+The function use a internal list to remember all added directories by this function.
+If you want to execute a script only once per run then use rcf_add_subdirectory_once_per_run().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>source_dir</strong> – The directory which should be added to CMake and executed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="function-rcf_add_subdirectory_once_per_run">
+<code class="descname">rcf_add_subdirectory_once_per_run</code><span class="sig-paren">(</span><span class="argument-list"><span class="arg"><strong class="arg-flag">source_dir</strong></span></span><span class="sig-paren">)</span><a class="headerlink" href="#function-rcf_add_subdirectory_once_per_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the specified directory if not happend yet and block upcomming request for this run.
+The function use a internal list to remember all added directories by this function.
+If you want to execute a script only once over multiple runs then use rcf_add_subdirectory_once().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>source_dir</strong> – The directory which should be added to CMake and executed.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -97,7 +192,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Thomas Kunze.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.2.
     </div>
   </body>
 </html>
