@@ -230,7 +230,7 @@ macro(CheckIntrinsicSupportVS projectid)
         set(${projectid}_COMPILER_USE_INTRINSIC_SSE42 OFF CACHE BOOL "Activate SSE4.2 intrinsic functions(Default: on)" FORCE)
     endif()  
     
-    CHECK_INCLUDE_FILES(arm_neon.h arm64_neon.h HAVE_ARMNEON_H)
+    CHECK_INCLUDE_FILES("arm_neon.h;arm64_neon.h" HAVE_ARMNEON_H)
     if(NOT HAVE_ARMNEON_H)
         set(${projectid}_COMPILER_USE_INTRINSIC_NEON OFF CACHE BOOL "Activate NEON intrinsic functions(Default: on)" FORCE)    
     endif() 
