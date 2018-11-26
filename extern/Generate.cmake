@@ -1,6 +1,9 @@
 #[[.rst Generate
 ========
 ]]
+
+include(CMakeDependentOption)
+
 macro(GenerateModule projectid)
 	add_library(${${projectid}_NAME} STATIC ${${projectid}_FILES} "")
 	target_link_libraries(${${projectid}_NAME} ${${projectid}_LIBS})
@@ -60,23 +63,10 @@ macro(SharedGenerate what projectid projectname foldergroup)
 	set(CMAKE_DEBUG_POSTFIX D)
     set(CMAKE_RELMINSIZE_POSTFIX RM)
     set(CMAKE_RELWITHDEBINFO_POSTFIX RD)
-    
-    if(USE_VGDB)
-        # Add a Visual GDB Execution target.
-        option(${projectid}_VGDB_TARGET "Generate a Visual GDB compiler target." OFF)
-        if(${${projectid}_VGDB_TARGET})
-            include("${RCF_PATH}/intern/VisualGDB.cmake")
-            GenerateVGDBTarget(${projectid})
-        endif()    
-    endif()
 endmacro()
 
 macro(SharedFinalize projectid)
-    if(USE_VGDB)
-        if(${${projectid}_VGDB_TARGET})
-            FinalizeVGDBTarget(${projectid})
-        endif()
-    endif()
+
 endmacro()
 
 macro(Generate what projectid projectname foldergroup)

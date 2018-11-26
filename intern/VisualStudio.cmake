@@ -1,7 +1,6 @@
 #[[.rst Visual Studio
 =============
 ]]
-include("${RCF_PATH}/intern/VisualGDB.cmake")
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 
@@ -31,8 +30,11 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		if(${${projectid}_COMPILER_TREAT_WARNINGS_AS_ERROR})
 			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /WX")
 		endif()
+
+		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /experimental:module /module:search \"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\"")
 		
 		if(${buildtype} STREQUAL "EXECUTABLE")
+			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS}")
 			if(NOT ${${projectid}_LINKER_USE_DEFAULTLIB})
 				set(${projectid}_LINKER_FLAGS "${${projectid}_LINKER_FLAGS} /NODEFAULTLIB")
 			endif()		
@@ -51,14 +53,14 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		if (${${projectid}_LINKER_STATIC_LINKED_CRT})
 			# MT/MTd = Link against runtime multithreaded and multithreaded debug static library.
 			# NDEBUG/_DEBUG = Signal the MS CRT if it's debug build or not.
-			set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /MTd /D_DEBUG")
+			set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /MTd /D _DEBUG")
 			set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /MT /D NDEBUG")
 			set(${projectid}_COMPILER_FLAGS_RELWITHDEBINFO "${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO} /MT /D NDEBUG")
 			set(${projectid}_COMPILER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /MT /D NDEBUG")		
 		else()
 			# MD/MDd = Link against runtime multithreaded and multithreaded debug shared library.
 			# NDEBUG/_DEBUG = Signal the MS CRT if it's debug build or not.
-			set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /MDd /D_DEBUG")
+			set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /MDd /D _DEBUG")
 			set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /MD /D NDEBUG")
 			set(${projectid}_COMPILER_FLAGS_RELWITHDEBINFO "${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO} /MD /D NDEBUG")
 			set(${projectid}_COMPILER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /MD /D NDEBUG")		
@@ -250,3 +252,15 @@ macro(CheckIntrinsicSupportVS projectid)
     set(${projectid}_COMPILER_USE_INTRINSIC_SHA2 OFF CACHE BOOL "Activate SHA256 intrinsic functions(Default: on)" FORCE)
     set(${projectid}_COMPILER_USE_INTRINSIC_CRC32 OFF CACHE BOOL "Activate CRC32 intrinsic functions(Default: on)" FORCE)
 endmacro()
+
+function(rcf_file_specific_flags_VS projectid)
+	get_target_property(target_files ${${projectid}_NAME} SOURCES)
+	foreach(file ${target_files})
+		get_filename_component(fileextension ${file} EXT)
+		if (${fileextension} MATCHES ".mpp$")
+			get_filename_component(filename ${file} NAME)
+			string(REGEX REPLACE "^(.*)\\.[^.]*$" "\\1" filename_without_extension ${filename})
+			set_source_files_properties("${file}" PROPERTIES COMPILE_FLAGS "${${projectid}_COMPILER_FLAGS} /module:export /module:output \"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${filename_without_extension}.ifc\"")
+		endif()		
+	endforeach()
+endfunction()

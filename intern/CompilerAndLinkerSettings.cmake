@@ -18,6 +18,8 @@ macro(ConfigureCompilerAndLinker projectid buildtype)
 	# Most compiler support a couple of intrinsic functions which will replace standard C routines(e.g. memcpy).
 	option(${projectid}_COMPILER_USE_INTRINSIC "Activate intrinsic functions(Default: on)" ON)
     mark_as_advanced(${projectid}_COMPILER_USE_INTRINSIC)
+	# Module support.
+	option(${projectid}_COMPILER_EXPORT_AS_MODULE "Generate the project as module(Default: off)" OFF)
     if(${${projectid}_COMPILER_USE_INTRINSIC})
         option(${projectid}_COMPILER_USE_INTRINSIC_MMX "Activate MMX intrinsic functions(Default: on)" ON)
         option(${projectid}_COMPILER_USE_INTRINSIC_SSE "Activate SSE intrinsic functions(Default: on)" ON)
@@ -158,7 +160,6 @@ macro(FinalizeCompilerAndLinkerSettings projectid)
 
     message(STATUS "flags: ${${projectid}_COMPILER_FLAGS}")
 	set_target_properties(${${projectid}_NAME} PROPERTIES COMPILE_FLAGS ${${projectid}_COMPILER_FLAGS})
-	
 	if(NOT ${${projectid}_WHAT} STREQUAL "HEADERONLY")
     	target_compile_options(${${projectid}_NAME} PRIVATE $<$<CONFIG:DEBUG>:${${projectid}_COMPILER_FLAGS_DEBUG}> $<$<CONFIG:RELEASE>:${${projectid}_COMPILER_FLAGS_RELEASE}> $<$<CONFIG:RELWITHDEBINFO>:${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO}> $<$<CONFIG:MINSIZEREL>:${${projectid}_COMPILER_FLAGS_RELMINSIZE}>)
 	endif()
@@ -189,4 +190,6 @@ macro(FinalizeCompilerAndLinkerSettings projectid)
       set_target_properties(${${projectid}_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" )          
       set_target_properties(${${projectid}_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}" )          
     endif()
+
+	rcf_file_specific_flags_VS(${projectid})
 endmacro()
