@@ -53,17 +53,17 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		if (${${projectid}_LINKER_STATIC_LINKED_CRT})
 			# MT/MTd = Link against runtime multithreaded and multithreaded debug static library.
 			# NDEBUG/_DEBUG = Signal the MS CRT if it's debug build or not.
-			set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /MTd /D _DEBUG")
-			set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /MT /D NDEBUG")
-			set(${projectid}_COMPILER_FLAGS_RELWITHDEBINFO "${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO} /MT /D NDEBUG")
-			set(${projectid}_COMPILER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /MT /D NDEBUG")		
+			set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /MTd")
+			set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /MT")
+			set(${projectid}_COMPILER_FLAGS_RELWITHDEBINFO "${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO} /MT")
+			set(${projectid}_COMPILER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /MT")		
 		else()
 			# MD/MDd = Link against runtime multithreaded and multithreaded debug shared library.
 			# NDEBUG/_DEBUG = Signal the MS CRT if it's debug build or not.
-			set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /MDd /D _DEBUG")
-			set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /MD /D NDEBUG")
-			set(${projectid}_COMPILER_FLAGS_RELWITHDEBINFO "${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO} /MD /D NDEBUG")
-			set(${projectid}_COMPILER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /MD /D NDEBUG")		
+			set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /MDd")
+			set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /MD")
+			set(${projectid}_COMPILER_FLAGS_RELWITHDEBINFO "${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO} /MD")
+			set(${projectid}_COMPILER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /MD")		
 			
 			if(NOT ${${projectid}_COMPILER_USE_EXCEPTION})
 				# VS2010 have some bugs in STL with wrong defines related to dynamic crt and disabled exceptions(fixed since VS2012)
