@@ -34,6 +34,9 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} /experimental:module /module:search \"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\"")
 		
 		if(${buildtype} STREQUAL "EXECUTABLE")
+			get_filename_component(manifest "${RCF_PATH}/intern/Windows.manifest" ABSOLUTE)
+			target_sources(${${projectid}_NAME} PRIVATE "${manifest}")
+
 			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS}")
 			if(NOT ${${projectid}_LINKER_USE_DEFAULTLIB})
 				set(${projectid}_LINKER_FLAGS "${${projectid}_LINKER_FLAGS} /NODEFAULTLIB")
