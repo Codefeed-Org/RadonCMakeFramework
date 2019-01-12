@@ -6,7 +6,7 @@ set(package_source "https://github.com/tak2004/RF_Diagnostics.git")
 
 if(${package_version} STREQUAL "dev")
 elseif(${package_version} STREQUAL "newest" OR ${package_version} STREQUAL "0.1.0")
-  set(package_revision "b46c568ec5bd6ef25b47838e149ac57ce26ceacd")
+  set(package_revision "8453a84973b685c48f366496f372eb30a94a9f7f")
 else()
   message(FATAL_ERROR "Unknown package version. Please use 'dev','newest' or '0.1.0'.")
 endif()
