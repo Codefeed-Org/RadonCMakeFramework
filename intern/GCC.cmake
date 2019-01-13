@@ -20,7 +20,7 @@ endmacro()
 macro(ProcessDefinesGCC projectid)
 	if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC)
         set(CMAKE_C_FLAGS "-std=c11")
-        set(CMAKE_CXX_FLAGS "-std=c++11")
+        set(CMAKE_CXX_FLAGS "-std=c++17")
     
 		foreach(flag ${${projectid}_COMPILER_DEFINES})
 			set(${projectid}_COMPILER_FLAGS "${${projectid}_COMPILER_FLAGS} -D${flag}")
