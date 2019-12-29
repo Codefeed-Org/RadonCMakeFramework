@@ -6,7 +6,7 @@ set(package_source "https://github.com/tak2004/RF_Console.git")
 
 if(${package_version} STREQUAL "dev")
 elseif(${package_version} STREQUAL "newest" OR ${package_version} STREQUAL "0.1.0")
-  set(package_revision "bc76f97caf8b2bde07df0c72289aa0b330cb9b15")
+  set(package_revision "f6a7eac56a3669a0b17cba29b80711aaed344c9e")
 else()
   message(FATAL_ERROR "Unknown package version. Please use 'dev','newest' or '0.1.0'.")
 endif()
