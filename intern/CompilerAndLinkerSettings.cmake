@@ -160,8 +160,12 @@ macro(FinalizeCompilerAndLinkerSettings projectid)
 
     message(STATUS "flags: ${${projectid}_COMPILER_FLAGS}")
 	set_target_properties(${${projectid}_NAME} PROPERTIES COMPILE_FLAGS ${${projectid}_COMPILER_FLAGS})
+	string(REPLACE " " ";" DEBUG_LIST ${${projectid}_COMPILER_FLAGS_DEBUG})
+	string(REPLACE " " ";" RELWITHDEBINFO_LIST ${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO})
+	string(REPLACE " " ";" RELEASE_LIST ${${projectid}_COMPILER_FLAGS_RELEASE})
+	string(REPLACE " " ";" RELMINSIZE_LIST ${${projectid}_COMPILER_FLAGS_RELMINSIZE})
 	if(NOT ${${projectid}_WHAT} STREQUAL "HEADERONLY")
-    	target_compile_options(${${projectid}_NAME} PRIVATE $<$<CONFIG:DEBUG>:${${projectid}_COMPILER_FLAGS_DEBUG}> $<$<CONFIG:RELEASE>:${${projectid}_COMPILER_FLAGS_RELEASE}> $<$<CONFIG:RELWITHDEBINFO>:${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO}> $<$<CONFIG:MINSIZEREL>:${${projectid}_COMPILER_FLAGS_RELMINSIZE}>)
+    	target_compile_options(${${projectid}_NAME} PRIVATE $<$<CONFIG:DEBUG>:${DEBUG_LIST}> $<$<CONFIG:RELEASE>:${RELEASE_LIST}> $<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_LIST}> $<$<CONFIG:MINSIZEREL>:${RELMINSIZE_LIST}>)
 	endif()
 
     if(${${projectid}_WHAT} STREQUAL "EXECUTABLE")    

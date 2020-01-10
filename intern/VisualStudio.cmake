@@ -53,7 +53,7 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 			endif()			
 		endif()
 		
-		if (${${projectid}_LINKER_STATIC_LINKED_CRT})
+		if (${${projectid}_COMPILER_STATIC_LINKED_CRT})
 			# MT/MTd = Link against runtime multithreaded and multithreaded debug static library.
 			# NDEBUG/_DEBUG = Signal the MS CRT if it's debug build or not.
 			set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /MTd")
@@ -97,7 +97,7 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 		# Ob1 = only __inline marked functions will be inlined
 		# Ob2 = any suitable function will be inlined(e.g. getter/setter functions)
 		set(${projectid}_COMPILER_FLAGS_DEBUG "${${projectid}_COMPILER_FLAGS_DEBUG} /Ob0")
-		set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /Ob2")
+#		set(${projectid}_COMPILER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /Ob2")
 		set(${projectid}_COMPILER_FLAGS_RELWITHDEBINFO "${${projectid}_COMPILER_FLAGS_RELWITHDEBINFO} /Ob2")
 		set(${projectid}_COMPILER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /Ob1")		
 
@@ -140,8 +140,8 @@ macro(ConfigureCompilerAndLinkerVS projectid buildtype)
 
 		# OPT:REF = Remove unused references.
 		# OPT:ICF = Combine same code chunks into one and point to the shared code.
-		set(${projectid}_LINKER_FLAGS_RELEASE "${${projectid}_COMPILER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
-		set(${projectid}_LINKER_FLAGS_RELMINSIZE "${${projectid}_COMPILER_FLAGS_RELMINSIZE} /OPT:REF /OPT:ICF")
+		set(${projectid}_LINKER_FLAGS_RELEASE "${${projectid}_LINKER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
+		set(${projectid}_LINKER_FLAGS_RELMINSIZE "${${projectid}_LINKER_FLAGS_RELMINSIZE} /OPT:REF /OPT:ICF")
 
 		#
 		# fix visual studio output directory
